@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us | Synergetic Insights and Consulting</title>
+<meta name="description" content="Get in touch with Synergetic Insights and Consulting for Monitoring, Evaluation, Learning, Knowledge Management, Research, and Data Analysis services.">
+<link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container navbar">
+    <a href="index.html" class="brand">
+      <img src="assets/img/logo.svg" alt="Synergetic Insights and Consulting logo">
+      <span class="brand-text">SYNERGETIC<span>Insights &amp; Consulting</span></span>
+    </a>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="contact.html" class="nav-cta">Contact Us</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<section class="page-header">
+  <div class="container">
+    <span class="eyebrow">Contact Us</span>
+    <h1>Let's Talk</h1>
+    <p>Tell us about your program or research needs — we usually reply within one business day.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container contact-grid">
+
+    <div>
+      <h2 style="font-size:1.5rem; margin-bottom:24px;">Contact Information</h2>
+
+      <div class="contact-info-item">
+        <div class="contact-info-icon">📍</div>
+        <div>
+          <h3>Office</h3>
+          <p>Amman, Jordan<br><em>(update with your exact office address)</em></p>
+        </div>
+      </div>
+
+      <div class="contact-info-item">
+        <div class="contact-info-icon">✉️</div>
+        <div>
+          <h3>Email</h3>
+          <p><a href="mailto:info@synergetic-consulting.com">info@synergetic-consulting.com</a></p>
+        </div>
+      </div>
+
+      <div class="contact-info-item">
+        <div class="contact-info-icon">📞</div>
+        <div>
+          <h3>Phone</h3>
+          <p><a href="tel:+962000000000">+962 X XXXX XXXX</a><br><em>(update with your number)</em></p>
+        </div>
+      </div>
+
+      <div class="contact-info-item">
+        <div class="contact-info-icon">🕐</div>
+        <div>
+          <h3>Working Hours</h3>
+          <p>Sunday – Thursday, 9:00 AM – 5:00 PM</p>
+        </div>
+      </div>
+
+      <div class="map-frame">
+        <iframe
+          src="https://www.google.com/maps?q=Amman,Jordan&output=embed"
+          allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          title="Map showing Amman, Jordan">
+        </iframe>
+      </div>
+    </div>
+
+    <div>
+      <h2 style="font-size:1.5rem; margin-bottom:24px;">Send Us a Message</h2>
+
+      <div id="form-status" class="form-status"></div>
+
+      <!--
+        This form posts to Formspree (free service, no backend needed — works on GoDaddy static hosting).
+        1. Create a free account at https://formspree.io
+        2. Create a form and copy its endpoint (looks like https://formspree.io/f/xxxxxxxx)
+        3. Replace YOUR_FORM_ID in the action attribute below with that endpoint.
+        Alternatively, if your GoDaddy plan includes PHP hosting, you can replace the action
+        with a PHP mail script.
+      -->
+      <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="organization">Organization</label>
+            <input type="text" id="organization" name="organization">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="service">Service of Interest</label>
+          <select id="service" name="service">
+            <option value="">Select a service</option>
+            <option value="Monitoring & Evaluation">Monitoring &amp; Evaluation</option>
+            <option value="Learning & Knowledge Management">Learning &amp; Knowledge Management</option>
+            <option value="Research">Research</option>
+            <option value="Data Analysis">Data Analysis</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Send Message</button>
+        <p class="form-note">* Required fields. We respect your privacy and will only use your details to respond to your inquiry.</p>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand">
+          <img src="assets/img/logo.svg" alt="Synergetic Insights and Consulting logo">
+          <span class="brand-text">SYNERGETIC<span>Insights &amp; Consulting</span></span>
+        </div>
+        <p>Monitoring, evaluation, learning, knowledge management, research, and data analysis services for organizations working across Jordan and the region.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#monitoring-evaluation">Monitoring &amp; Evaluation</a></li>
+          <li><a href="services.html#learning-km">Learning &amp; Knowledge Management</a></li>
+          <li><a href="services.html#research">Research</a></li>
+          <li><a href="services.html#data-analysis">Data Analysis</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li>Amman, Jordan</li>
+          <li><a href="mailto:info@synergetic-consulting.com">info@synergetic-consulting.com</a></li>
+          <li><a href="tel:+962000000000">+962 X XXXX XXXX</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> Synergetic Insights and Consulting. All rights reserved.</p>
+      <div class="social-links">
+        <a href="#" aria-label="LinkedIn">in</a>
+        <a href="#" aria-label="Twitter/X">X</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
