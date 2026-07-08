@@ -13,24 +13,35 @@ contact.html         Contact page with form
 404.html             Custom "page not found" page
 robots.txt           Search engine crawl rules
 sitemap.xml          Sitemap for SEO
+favicon.ico          Legacy favicon (icon mark cropped from the logo)
 assets/css/style.css Site styling (colors, fonts, layout)
 assets/js/main.js    Mobile menu, active nav highlight, contact form submission
-assets/img/          Logo and favicon (SVG)
+assets/img/          Logo, favicon, and icon assets
 ```
 
 ## Brand
 
-- **Colors**: navy `#002A58` (primary), red `#FF0000` (accent), gray `#676767` (body text)
-  — set as CSS variables at the top of `assets/css/style.css` (`:root { ... }`), so you
-  can change them once and they apply site-wide.
-- **Fonts**: Montserrat (headings) + Open Sans (body), loaded from Google Fonts.
-  These were **not specified** in the info I had — if your brand guideline calls for
-  different fonts, update the `<link href="https://fonts.googleapis.com/...">` tag in
-  every page `<head>` and the `--font-heading` / `--font-body` variables in `style.css`.
-- **Logo**: `assets/img/logo.svg` and `favicon.svg` are placeholder, text/icon-based
-  marks built from your brand colors. Replace them with your real logo file (SVG or PNG)
-  — keep the same filenames, or update the `<img src="...">` references across all
-  HTML files.
+- **Colors**: navy `#002A58` (primary), gray `#676767` (body text), and red-orange
+  `#FF4300` (accent) — all read from your logo file's embedded colors. Note: this is
+  `#FF4300`, not pure `#FF0000` — that's what's actually in `Artboard 8.svg`, so I used
+  it for visual consistency with the logo. Say the word if you actually want pure red
+  instead. Colors are set as CSS variables at the top of `assets/css/style.css`
+  (`:root { ... }`), so you can change them once and they apply site-wide.
+- **Fonts**: Poppins (headings, matching the rounded bold sans of the "Synergetic"
+  wordmark) + PT Serif (used for small-caps "eyebrow" labels, matching the serif
+  small-caps "INSIGHTS AND CONSULTING" tagline in the logo) + Open Sans (body text).
+  Loaded from Google Fonts in every page `<head>`.
+- **Logo**: your real logo (`assets/img/Artboard 8.svg`, as uploaded) is used in two
+  derived forms:
+  - `assets/img/logo.svg` — full-color version, used in the header and anywhere on a
+    light background.
+  - `assets/img/logo-white.svg` — same logo with the navy wordmark recolored to white
+    and the gray tagline lightened, for use on dark navy backgrounds (footer, hero
+    watermark areas) where the navy text would otherwise be invisible.
+  - `assets/img/icon-*.png` — the icon mark (red square + white "S") cropped out of
+    the logo at several sizes, used for the favicon and as a decorative brand mark.
+  - If you update the logo later, regenerate `logo-white.svg` by swapping the navy/gray
+    hex values in a copy of the file, and re-crop the icon for the favicon.
 
 ## Content to review before launch
 

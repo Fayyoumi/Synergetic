@@ -11,7 +11,7 @@
       }
 
       .cls-333 {
-        fill: #002a58;
+        fill: #ffffff;
       }
 
       .cls-334 {
@@ -1339,7 +1339,7 @@
       }
 
       .cls-335 {
-        fill: #676767;
+        fill: #cbd4dc;
         font-family: Jura-Bold, Jura;
         font-size: 65.44px;
         font-variation-settings: 'wght' 700;
