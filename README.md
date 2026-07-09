@@ -59,20 +59,19 @@ and should be checked:
 
 ## Contact form setup
 
-The contact form posts to `contact-handler.php`, which emails submissions directly to
-`info@synergetic-consulting.com` using PHP's `mail()` function. This requires PHP hosting
-(standard on GoDaddy cPanel plans, including Web Hosting Economy) — no third-party account
-needed.
+The contact form posts to [Formspree](https://formspree.io) (form ID `xaqggayg`), which
+forwards submissions to `info@synergetic-consulting.com`.
 
-- Make sure `contact-handler.php` is uploaded to `public_html` alongside the other files.
-- Test the form after deploying by submitting it and checking the inbox for
-  `info@synergetic-consulting.com` (including spam/junk on the first test).
-- If messages aren't arriving, check with GoDaddy support that PHP `mail()` is enabled for
-  your hosting plan, or ask them to check your account's mail sending logs.
+A plain PHP `mail()` script was tried first, but `info@synergetic-consulting.com` is a real
+Office 365 mailbox — mail sent "from" that domain via GoDaddy's shared hosting (which isn't
+authorized in the domain's SPF/DKIM records) gets treated as spoofing and silently dropped
+by Microsoft's spam filtering. Formspree sends as itself (a trusted, authenticated sender)
+to your inbox as a normal external email, avoiding that problem entirely.
 
-If you ever move to a static-only host without PHP, you'd need to swap this out for a
-service like [Formspree](https://formspree.io) instead — change the form's `action` in
-`contact.html` to the Formspree endpoint.
+To manage the form (view submissions, change the notification email, etc.), log in at
+[formspree.io](https://formspree.io) → Forms → Synergetic. The destination email
+(`info@synergetic-consulting.com`) must stay verified under **Account → Linked Emails** or
+delivery will stop.
 
 ## Deploying to GoDaddy
 
