@@ -1,22 +1,22 @@
 /* ==========================================================================
    Synergetic Insights and Consulting — stylesheet
-   Brand colors (from logo file): navy #002A58 (primary), red-orange #FF4300 (accent), gray #676767 (text)
+   Brand colors (from final logo file): navy #002A58 (primary), red #FF0000 (accent), orange #FF4300 (secondary accent), gray #676767 (text)
    ========================================================================== */
 
 :root {
   --color-navy: #002A58;
   --color-navy-light: #0b3e78;
-  --color-red: #FF4300;
-  --color-red-dark: #cc3600;
+  --color-red: #FF0000;
+  --color-red-dark: #cc0000;
+  --color-accent-orange: #FF4300;
   --color-gray: #676767;
   --color-gray-light: #f4f6f8;
   --color-border: #e2e6ea;
   --color-white: #ffffff;
 
-  /* Poppins matches the rounded, bold sans of the "Synergetic" wordmark;
-     PT Serif matches the small-caps serif of the "Insights and Consulting" tagline. */
+  /* Poppins matches the rounded, bold sans of the "Synergetic" wordmark and
+     the light, wide-tracked sans of the "Insights and Consulting" tagline. */
   --font-heading: 'Poppins', 'Segoe UI', Arial, sans-serif;
-  --font-accent: 'PT Serif', Georgia, serif;
   --font-body: 'Open Sans', 'Segoe UI', Arial, sans-serif;
 
   --max-width: 1180px;
@@ -86,10 +86,10 @@ p { margin-bottom: 1rem; }
 
 .eyebrow {
   display: inline-block;
-  font-family: var(--font-accent);
-  font-weight: 700;
-  font-size: 0.85rem;
-  letter-spacing: 0.1em;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--color-red);
   margin-bottom: 14px;
@@ -344,7 +344,7 @@ p { margin-bottom: 1rem; }
 }
 
 .page-header .container { position: relative; z-index: 2; }
-.page-header .eyebrow { font-family: var(--font-accent); color: #ff8a5c; }
+.page-header .eyebrow { color: #ff8a5c; }
 .page-header h1 { color: var(--color-white); margin-bottom: 14px; }
 .page-header p { color: #d6dee7; max-width: 640px; margin: 0 auto; }
 
