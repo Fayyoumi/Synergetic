@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  // Contact form submission (Formspree — replace YOUR_FORM_ID in contact.html)
+  // Contact form submission (posts to contact-handler.php)
   var form = document.querySelector('#contact-form');
   if (form) {
     var status = document.querySelector('#form-status');
@@ -38,14 +38,8 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var action = form.getAttribute('action');
-
-      if (!action || action.indexOf('YOUR_FORM_ID') !== -1) {
-        status.textContent = 'Form is not connected yet. Please email us directly, or set up your form endpoint (see README).';
-        status.className = 'form-status error';
-        return;
-      }
-
       var data = new FormData(form);
+
       status.textContent = 'Sending...';
       status.className = 'form-status success';
 
@@ -55,12 +49,20 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: { Accept: 'application/json' }
       })
         .then(function (response) {
-          if (response.ok) {
+          return response.json().then(function (json) {
+            return { ok: response.ok, json: json };
+          }).catch(function () {
+            return { ok: response.ok, json: null };
+          });
+        })
+        .then(function (result) {
+          if (result.ok && result.json && result.json.ok) {
             status.textContent = 'Thank you — your message has been sent. We will get back to you shortly.';
             status.className = 'form-status success';
             form.reset();
           } else {
-            status.textContent = 'Something went wrong. Please try again or email us directly.';
+            var errorMessage = (result.json && result.json.error) || 'Something went wrong. Please try again or email us directly.';
+            status.textContent = errorMessage;
             status.className = 'form-status error';
           }
         })

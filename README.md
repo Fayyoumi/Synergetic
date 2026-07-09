@@ -59,19 +59,20 @@ and should be checked:
 
 ## Contact form setup
 
-The contact form posts to [Formspree](https://formspree.io) (a free service — no
-backend/server needed, works on any static host including GoDaddy):
+The contact form posts to `contact-handler.php`, which emails submissions directly to
+`info@synergetic-consulting.com` using PHP's `mail()` function. This requires PHP hosting
+(standard on GoDaddy cPanel plans, including Web Hosting Economy) — no third-party account
+needed.
 
-1. Create a free Formspree account and a new form.
-2. Copy the endpoint URL (looks like `https://formspree.io/f/xxxxxxxx`).
-3. In `contact.html`, replace `YOUR_FORM_ID` in:
-   ```html
-   <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-   ```
-4. Test the form after deploying.
+- Make sure `contact-handler.php` is uploaded to `public_html` alongside the other files.
+- Test the form after deploying by submitting it and checking the inbox for
+  `info@synergetic-consulting.com` (including spam/junk on the first test).
+- If messages aren't arriving, check with GoDaddy support that PHP `mail()` is enabled for
+  your hosting plan, or ask them to check your account's mail sending logs.
 
-If your GoDaddy plan includes PHP hosting, you could alternatively point the form
-at a PHP mail script instead.
+If you ever move to a static-only host without PHP, you'd need to swap this out for a
+service like [Formspree](https://formspree.io) instead — change the form's `action` in
+`contact.html` to the Formspree endpoint.
 
 ## Deploying to GoDaddy
 

@@ -96,14 +96,16 @@
       <div id="form-status" class="form-status"></div>
 
       <!--
-        This form posts to Formspree (free service, no backend needed — works on GoDaddy static hosting).
-        1. Create a free account at https://formspree.io
-        2. Create a form and copy its endpoint (looks like https://formspree.io/f/xxxxxxxx)
-        3. Replace YOUR_FORM_ID in the action attribute below with that endpoint.
-        Alternatively, if your GoDaddy plan includes PHP hosting, you can replace the action
-        with a PHP mail script.
+        This form posts to contact-handler.php, which emails submissions to
+        info@synergetic-consulting.com. Requires PHP hosting with mail()
+        enabled (standard on GoDaddy cPanel hosting) — no third-party
+        account needed.
       -->
-      <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <form id="contact-form" action="contact-handler.php" method="POST">
+        <div style="position:absolute; left:-9999px;" aria-hidden="true">
+          <label for="website">Leave this field empty</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <div class="form-row">
           <div class="form-group">
             <label for="name">Full Name *</label>
