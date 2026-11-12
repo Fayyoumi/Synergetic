@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>Sahra host screen results</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2B1B17}a:hover{color:#E8412C}
+</style>
+</helmet>
+<div dir="rtl" style="width: 1280px; height: 720px; box-sizing: border-box; background: #FFF4DE; color: #2B1B17; font-family: 'IBM Plex Sans Arabic', sans-serif; display: flex; flex-direction: column">
+
+<svg viewBox="0 0 1440 70" width="1280" height="62" aria-hidden="true" style="display: block; flex: none"><path d="M0 8 Q180 48 360 8 Q540 48 720 8 Q900 48 1080 8 Q1260 48 1440 8" fill="none" stroke="#2B1B17" stroke-width="2"/><g stroke="#2B1B17" stroke-width="2"><line x1="90" y1="23" x2="90" y2="29"/><ellipse cx="90" cy="39" rx="7" ry="10" fill="#E8412C"/><line x1="180" y1="28" x2="180" y2="34"/><ellipse cx="180" cy="44" rx="7" ry="10" fill="#FFC93C"/><line x1="270" y1="23" x2="270" y2="29"/><ellipse cx="270" cy="39" rx="7" ry="10" fill="#12A6A0"/><line x1="450" y1="23" x2="450" y2="29"/><ellipse cx="450" cy="39" rx="7" ry="10" fill="#2E8B57"/><line x1="540" y1="28" x2="540" y2="34"/><ellipse cx="540" cy="44" rx="7" ry="10" fill="#E8412C"/><line x1="630" y1="23" x2="630" y2="29"/><ellipse cx="630" cy="39" rx="7" ry="10" fill="#FFC93C"/><line x1="810" y1="23" x2="810" y2="29"/><ellipse cx="810" cy="39" rx="7" ry="10" fill="#12A6A0"/><line x1="900" y1="28" x2="900" y2="34"/><ellipse cx="900" cy="44" rx="7" ry="10" fill="#2E8B57"/><line x1="990" y1="23" x2="990" y2="29"/><ellipse cx="990" cy="39" rx="7" ry="10" fill="#E8412C"/><line x1="1170" y1="23" x2="1170" y2="29"/><ellipse cx="1170" cy="39" rx="7" ry="10" fill="#FFC93C"/><line x1="1260" y1="28" x2="1260" y2="34"/><ellipse cx="1260" cy="44" rx="7" ry="10" fill="#12A6A0"/><line x1="1350" y1="23" x2="1350" y2="29"/><ellipse cx="1350" cy="39" rx="7" ry="10" fill="#2E8B57"/></g></svg>
+
+<div style="flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; padding: 12px 56px 36px; min-height: 0">
+
+<div style="display: flex; flex-direction: column; gap: 22px; min-width: 0">
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="font-size: 15px; font-weight: 700; background: #E8412C; color: #FFF4DE; border: 2px solid #2B1B17; border-radius: 999px; padding: 4px 14px">مين فينا؟</div>
+<div style="font-size: 15px; color: #6B5147">الجولة ٣ من ٨ · مزاج الشلة</div>
+</div>
+<div style="font-family: 'Lalezar', sans-serif; font-size: 58px; line-height: 1.15">مين فينا… أول واحد بينام بالسهرة؟</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<sc-for list="{{votes}}" as="v" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 14px">
+<div style="width: 52px; height: 52px; border-radius: 50%; background: {{v.bg}}; border: 2px solid #2B1B17; font-family: 'Lalezar', sans-serif; font-size: 24px; display: flex; align-items: center; justify-content: center; flex: none">{{v.initial}}</div>
+<div style="width: 110px; font-weight: 700; font-size: 20px; flex: none">{{v.name}}</div>
+<div style="flex: 1; height: 40px; background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 12px; overflow: hidden; box-sizing: border-box">
+<div style="width: {{v.width}}; height: 100%; background: {{v.bar}}"></div>
+</div>
+<div style="width: 70px; font-family: 'Lalezar', sans-serif; font-size: 28px; flex: none">{{v.count}}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 14px">
+<div style="background: #FFFFFF; border: 3px solid #2B1B17; border-radius: 26px 26px 26px 6px; padding: 18px 22px; font-weight: 700; font-size: 22px; line-height: 1.45; align-self: stretch">سارة، ٤ أصوات! الكل شافك نايمة على الكنباية الأسبوع الماضي.</div>
+<svg viewBox="0 0 200 240" width="220" height="264" role="img" aria-label="Kassa, the tea-glass host"><defs><clipPath id="kh1"><path d="M60 60 C55 100 75 120 70 150 C66 180 72 205 100 205 C128 205 134 180 130 150 C125 120 145 100 140 60 Z"/></clipPath></defs><g fill="none" stroke="#2B1B17" stroke-width="5" stroke-linecap="round"><path d="M85 44 C75 34 95 24 85 12"/><path d="M100 44 C90 31 110 21 100 6"/><path d="M115 44 C105 34 125 24 115 12"/></g><ellipse cx="100" cy="214" rx="72" ry="14" fill="#12A6A0" stroke="#2B1B17" stroke-width="5"/><path d="M60 60 C55 100 75 120 70 150 C66 180 72 205 100 205 C128 205 134 180 130 150 C125 120 145 100 140 60 Z" fill="#FFFDF7"/><rect x="40" y="92" width="120" height="120" fill="#D9541E" clip-path="url(#kh1)"/><path d="M60 60 C55 100 75 120 70 150 C66 180 72 205 100 205 C128 205 134 180 130 150 C125 120 145 100 140 60 Z" fill="none" stroke="#2B1B17" stroke-width="5" stroke-linejoin="round"/><ellipse cx="100" cy="60" rx="40" ry="8" fill="#FFFDF7" stroke="#2B1B17" stroke-width="5"/><path d="M72 76 C69 92 73 104 71 116" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="86" cy="124" r="10" fill="#FFFFFF" stroke="#2B1B17" stroke-width="4"/><circle cx="114" cy="124" r="10" fill="#FFFFFF" stroke="#2B1B17" stroke-width="4"/><circle cx="88" cy="126" r="4" fill="#2B1B17"/><circle cx="116" cy="126" r="4" fill="#2B1B17"/><path d="M74 106 Q84 98 96 104" stroke="#2B1B17" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M105 108 Q115 105 126 110" stroke="#2B1B17" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M84 142 Q92 135 100 141 Q108 135 116 142 Q108 147 100 144 Q92 147 84 142 Z" fill="#2B1B17"/><path d="M86 152 Q100 172 114 152 Z" fill="#2B1B17"/></svg>
+<div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #6B5147">انضم بالكود <span dir="ltr" style="font-family: 'Lalezar', sans-serif; font-size: 22px; color: #2B1B17; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 8px; padding: 2px 10px 0">4827</span></div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+renderVals() {
+const raw = [
+{ name: 'سارة', initial: 'س', n: 4, bg: '#E8412C' },
+{ name: 'أبو عمر', initial: 'ع', n: 2, bg: '#FFC93C' },
+{ name: 'كريم', initial: 'ك', n: 1, bg: '#12A6A0' },
+{ name: 'ليلى', initial: 'ل', n: 0, bg: '#FFFFFF' }
+];
+const digits = ['٠','١','٢','٣','٤','٥','٦','٧'];
+const votes = raw.map((r, i) => ({ ...r, count: digits[r.n], width: (r.n / 4 * 100) + '%', bar: i === 0 ? '#E8412C' : '#FFC93C' }));
+return { votes };
+}
+}
+</script>
+</body>
+</html>

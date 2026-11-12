@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>Sahra Mafia</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#FFF4DE;text-decoration:none}a:hover{color:#FFC93C}
+button:focus-visible,a:focus-visible{outline:3px solid #FFC93C;outline-offset:2px}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 844px; box-sizing: border-box; background: {{pageBg}}; color: {{pageFg}}; font-family: 'IBM Plex Sans Arabic', sans-serif; display: flex; flex-direction: column; gap: 14px; padding: 18px">
+
+<div style="display: flex; align-items: center; gap: 10px">
+<a href="Play.dc.html" aria-label="Back to games" style="width: 44px; height: 44px; border-radius: 50%; background: #FFF4DE; border: 2px solid #2B1B17; display: flex; align-items: center; justify-content: center; flex: none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#2B1B17" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+<div style="flex: 1; font-family: 'Lalezar', sans-serif; font-size: 28px; padding-top: 4px">مافيا</div>
+<div style="font-size: 13px; font-weight: 700; background: #E8412C; color: #FFF4DE; border: 2px solid #2B1B17; border-radius: 999px; padding: 4px 10px">{{phaseLabel}}</div>
+</div>
+
+<sc-if value="{{isReveal}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px">
+<div style="font-family: 'Lalezar', sans-serif; font-size: 32px; line-height: 1.2">الليل نزل على الحارة…</div>
+<div style="font-size: 15px; line-height: 1.6; color: #E9DCC4">٦ لاعبين. واحد منهم مافيا. خبّي شاشتك وشوف دورك.</div>
+<button type="button" onClick="{{reveal}}" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #3A2A24; color: #FFF4DE; border: 2px dashed #FFC93C; border-radius: 28px; cursor: pointer; font-family: 'IBM Plex Sans Arabic', sans-serif">
+<svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="#FFC93C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6c5-2 11-2 16 0v5c0 5-3.6 8-8 8s-8-3-8-8z"/><path d="M8 11c1-.8 2.2-.8 3 0M13 11c.8-.8 2-.8 3 0"/></svg>
+<span style="font-family: 'Lalezar', sans-serif; font-size: 28px">اضغط وشوف دورك</span>
+<span style="font-size: 14px; color: #E9DCC4">ما حدا غيرك بيشوف</span>
+</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isRole}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px">
+<div style="background: #FFC93C; color: #2B1B17; border: 3px solid #2B1B17; border-radius: 26px; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="align-self: flex-start; font-size: 13px; font-weight: 700; background: #2B1B17; color: #FFC93C; border-radius: 999px; padding: 4px 12px">فريق الحارة</div>
+<div style="font-family: 'Lalezar', sans-serif; font-size: 52px; line-height: 1">المختار</div>
+<div style="font-size: 16px; line-height: 1.6">كبير الحارة. كل ليلة بتحمي جار واحد من المافيا. ما بتقدر تحمي نفس الشخص ليلتين ورا بعض.</div>
+</div>
+<div style="font-size: 14px; line-height: 1.6; color: #E9DCC4">أدوار ثانية بالحارة: الحكيم، أم العريف (بتعرف الإشاعات)، الجار الفضولي، والمافيا.</div>
+<button type="button" onClick="{{toNight}}" style="margin-top: auto; font-family: 'Lalezar', sans-serif; font-size: 24px; background: #E8412C; color: #FFF4DE; border: 3px solid #2B1B17; border-radius: 18px; min-height: 60px; padding-top: 4px; cursor: pointer">جاهز، خبّي دوري</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isNight}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px">
+<div style="background: #3A2A24; border-radius: 18px; padding: 14px 16px; font-size: 15px; line-height: 1.6">كاسة: «الكل يسكّر عيونه… يا مختار، اصحى. مين بدك تحمي الليلة؟»</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{nightPlayers}}" as="p" hint-placeholder-count="5">
+<button type="button" onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="display: flex; align-items: center; gap: 10px; background: {{p.bg}}; color: #2B1B17; border: {{p.border}}; border-radius: 16px; padding: 12px; min-height: 60px; cursor: pointer; font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: 16px; text-align: right">
+<span style="width: 36px; height: 36px; border-radius: 50%; background: #FFF4DE; border: 2px solid #2B1B17; font-family: 'Lalezar', sans-serif; font-size: 18px; display: flex; align-items: center; justify-content: center; flex: none">{{p.initial}}</span>{{p.name}}
+</button>
+</sc-for>
+</div>
+<button type="button" onClick="{{toMorning}}" disabled="{{noProtect}}" style="margin-top: auto; font-family: 'Lalezar', sans-serif; font-size: 24px; background: #FFC93C; color: #2B1B17; border: 3px solid #2B1B17; border-radius: 18px; min-height: 60px; padding-top: 4px; cursor: pointer; opacity: {{protectOpacity}}">{{protectLabel}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isMorning}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px">
+<div style="background: #FFFFFF; border: 3px solid #2B1B17; border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-family: 'Lalezar', sans-serif; font-size: 30px; line-height: 1.2; color: {{morningColor}}">{{morningTitle}}</div>
+<div style="font-size: 15px; line-height: 1.6">{{morningText}}</div>
+</div>
+<div style="font-weight: 700; font-size: 16px">النهار: ناقشوا ٢ دقيقة وبعدين صوّتوا. مين المافيا؟</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{dayPlayers}}" as="p" hint-placeholder-count="5">
+<button type="button" onClick="{{p.pick}}" aria-pressed="{{p.pressed}}" style="display: flex; align-items: center; gap: 10px; background: {{p.bg}}; color: #2B1B17; border: {{p.border}}; border-radius: 16px; padding: 12px; min-height: 56px; cursor: pointer; font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: 16px; text-align: right">
+<span style="width: 34px; height: 34px; border-radius: 50%; background: #FFF4DE; border: 2px solid #2B1B17; font-family: 'Lalezar', sans-serif; font-size: 17px; display: flex; align-items: center; justify-content: center; flex: none">{{p.initial}}</span>{{p.name}}
+</button>
+</sc-for>
+</div>
+<button type="button" onClick="{{toVerdict}}" disabled="{{noVote}}" style="margin-top: auto; font-family: 'Lalezar', sans-serif; font-size: 24px; background: #E8412C; color: #FFF4DE; border: 3px solid #2B1B17; border-radius: 18px; min-height: 60px; padding-top: 4px; cursor: pointer; opacity: {{voteOpacity}}">ثبّت التصويت</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isVerdict}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px">
+<div style="background: {{verdictBg}}; color: #2B1B17; border: 3px solid #2B1B17; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 6px">
+<div style="font-family: 'Lalezar', sans-serif; font-size: 34px; line-height: 1.15">{{verdictTitle}}</div>
+<div style="font-size: 15px; line-height: 1.6">{{verdictText}}</div>
+</div>
+<div style="font-weight: 700; font-size: 15px">نقاطك بهالجولة</div>
+<sc-for list="{{pointsLog}}" as="r" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; background: #3A2A24; border-radius: 12px; padding: 10px 14px; font-size: 15px"><span>{{r.label}}</span><span style="font-weight: 700; color: #FFC93C">{{r.pts}}</span></div>
+</sc-for>
+<div style="display: flex; justify-content: space-between; align-items: center; background: #FFC93C; color: #2B1B17; border: 2px solid #2B1B17; border-radius: 14px; padding: 10px 14px"><span style="font-weight: 700">المجموع</span><span style="font-family: 'Lalezar', sans-serif; font-size: 28px">{{totalText}}</span></div>
+<button type="button" onClick="{{restart}}" style="margin-top: auto; font-family: 'Lalezar', sans-serif; font-size: 24px; background: #FFF4DE; color: #2B1B17; border: 3px solid #2B1B17; border-radius: 18px; min-height: 60px; padding-top: 4px; cursor: pointer">جولة جديدة</button>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { screen: 'reveal', protect: null, vote: null };
+}
+ar(n) { return String(n).replace(/[0-9]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.charAt(Number(d))); }
+renderVals() {
+const s = this.state;
+const people = [{ id: 'sara', name: 'سارة', initial: 'س' }, { id: 'omar', name: 'أبو عمر', initial: 'ع' }, { id: 'karim', name: 'كريم', initial: 'ك' }, { id: 'nour', name: 'نور', initial: 'ن' }, { id: 'yousef', name: 'يوسف', initial: 'ي' }];
+const mafia = 'karim', target = 'nour';
+const saved = s.protect === target;
+const alive = saved ? people : people.filter((p) => p.id !== target);
+const sel = (on) => ({ bg: on ? '#FFC93C' : '#FFF4DE', border: on ? '4px solid #2B1B17' : '2px solid #2B1B17', pressed: on ? 'true' : 'false' });
+const nightPlayers = people.map((p) => ({ ...p, ...sel(s.protect === p.id), pick: () => this.setState({ protect: p.id }) }));
+const dayPlayers = alive.map((p) => ({ ...p, ...sel(s.vote === p.id), pick: () => this.setState({ vote: p.id }) }));
+const caught = s.vote === mafia;
+const votedName = s.vote ? people.find((p) => p.id === s.vote).name : '';
+const log = [{ label: 'نجوت لليوم الثاني', pts: 100 }];
+if (saved) log.push({ label: 'حميت نور من المافيا', pts: 150 });
+if (caught) { log.push({ label: 'صوّتت صح على المافيا', pts: 100 }); log.push({ label: 'الحارة ربحت', pts: 200 }); }
+const total = log.reduce((a, r) => a + r.pts, 0);
+const phase = { reveal: 'الليلة ١', role: 'الليلة ١', night: 'الليلة ١', morning: 'النهار ١', verdict: 'النتيجة' }[s.screen];
+const dark = s.screen === 'reveal' || s.screen === 'role' || s.screen === 'night' || s.screen === 'verdict';
+return {
+pageBg: dark ? '#2B1B17' : '#FFC93C', pageFg: dark ? '#FFF4DE' : '#2B1B17',
+phaseLabel: phase,
+isReveal: s.screen === 'reveal', isRole: s.screen === 'role', isNight: s.screen === 'night', isMorning: s.screen === 'morning', isVerdict: s.screen === 'verdict',
+reveal: () => this.setState({ screen: 'role' }),
+toNight: () => this.setState({ screen: 'night' }),
+nightPlayers, noProtect: s.protect === null, protectOpacity: s.protect === null ? 0.5 : 1,
+protectLabel: s.protect === null ? 'اختار مين تحمي' : 'احمِ ' + people.find((p) => p.id === s.protect).name + ' ونام',
+toMorning: () => { if (s.protect) this.setState({ screen: 'morning' }); },
+morningTitle: saved ? 'صباح الخير يا حارة!' : 'صباح حزين…',
+morningText: saved ? 'المافيا حاولت تطلّع نور الليلة، بس المختار كان حاميها. ما حدا طلع!' : 'المافيا طلّعت نور من اللعبة. المختار كان حامي حدا ثاني.',
+morningColor: saved ? '#12A6A0' : '#E8412C',
+dayPlayers, noVote: s.vote === null, voteOpacity: s.vote === null ? 0.5 : 1,
+toVerdict: () => { if (s.vote) this.setState({ screen: 'verdict' }); },
+verdictBg: caught ? '#12A6A0' : '#E8412C',
+verdictTitle: caught ? 'مسكتوا المافيا!' : votedName + ' طلع بريء!',
+verdictText: caught ? 'كريم كان المافيا من الأول. الحارة ربحت، وكاسة بيقول: «عيونه فضحته من أول دقيقة».' : 'المافيا لسا بيناتكم… والليل جاي. بالجولة الحقيقية اللعب بيكمّل لحد ما حدا يربح.',
+pointsLog: log.map((r) => ({ label: r.label, pts: '+' + this.ar(r.pts) })),
+totalText: '+' + this.ar(total),
+restart: () => this.setState({ screen: 'reveal', protect: null, vote: null })
+};
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+[
+  {
+    "lang": "ar",
+    "word": "منسف",
+    "category": "أكلات",
+    "difficulty": 1,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "كنافة",
+    "category": "أكلات",
+    "difficulty": 1,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "فلافل",
+    "category": "أكلات",
+    "difficulty": 1,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "شرطي مرور",
+    "category": "مهن",
+    "difficulty": 1,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "حلاق",
+    "category": "مهن",
+    "difficulty": 1,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "خبّاز",
+    "category": "مهن",
+    "difficulty": 1,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "طبيب أسنان",
+    "category": "مهن",
+    "difficulty": 2,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "باب الحارة",
+    "category": "مسلسلات",
+    "difficulty": 2,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "زحمة سير",
+    "category": "مواقف يومية",
+    "difficulty": 2,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "سيارة عالقة بالثلج",
+    "category": "مواقف يومية",
+    "difficulty": 2,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "دبكة",
+    "category": "مواقف يومية",
+    "difficulty": 1,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "الصبر مفتاح الفرج",
+    "category": "أمثال شعبية",
+    "difficulty": 3,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "اللي استحوا ماتوا",
+    "category": "أمثال شعبية",
+    "difficulty": 3,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "تيتا بتعمل مقلوبة",
+    "category": "مواقف يومية",
+    "difficulty": 3,
+    "status": "approved"
+  },
+  {
+    "lang": "ar",
+    "word": "عريس متأخر على عرسه",
+    "category": "مواقف يومية",
+    "difficulty": 3,
+    "status": "approved"
+  }
+]

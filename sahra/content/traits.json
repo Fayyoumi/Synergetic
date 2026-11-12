@@ -1,0 +1,258 @@
+{
+  "templates": [
+    {
+      "lang": "ar",
+      "templates": [
+        "مين فينا… {trait}؟"
+      ]
+    },
+    {
+      "lang": "en",
+      "templates": [
+        "Who among us… {trait}?"
+      ]
+    }
+  ],
+  "traits": [
+    {
+      "id": "trait-0001",
+      "lang": "ar",
+      "text": "أول واحد بينام بالسهرة",
+      "mood_min": "family",
+      "banned": false,
+      "status": "approved"
+    },
+    {
+      "id": "trait-0002",
+      "lang": "ar",
+      "text": "بيضيع بالطريق دايماً",
+      "mood_min": "family",
+      "banned": false,
+      "status": "approved"
+    },
+    {
+      "id": "trait-0003",
+      "lang": "ar",
+      "text": "بياكل أكثر شي",
+      "mood_min": "family",
+      "banned": false,
+      "status": "approved"
+    },
+    {
+      "id": "trait-0004",
+      "lang": "ar",
+      "text": "بيبكي بالأفلام",
+      "mood_min": "family",
+      "banned": false,
+      "status": "approved"
+    },
+    {
+      "id": "trait-0005",
+      "lang": "ar",
+      "text": "بيرد على الرسائل بعد يومين",
+      "mood_min": "family",
+      "banned": false,
+      "status": "approved"
+    },
+    {
+      "id": "trait-0006",
+      "lang": "ar",
+      "text": "بيتأخر على كل موعد",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0007",
+      "lang": "ar",
+      "text": "بينسى عيد ميلاد الكل",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0008",
+      "lang": "ar",
+      "text": "بيحكي بالتلفون أكثر شي",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0009",
+      "lang": "ar",
+      "text": "بيضحك على نكتته قبل ما يخلّصها",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0010",
+      "lang": "ar",
+      "text": "بيصوّر الأكل قبل ما ياكل",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0011",
+      "lang": "ar",
+      "text": "بيغيّر رأيه بالمطعم عشر مرات",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0012",
+      "lang": "ar",
+      "text": "بيعرف كل أخبار الجيران",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0013",
+      "lang": "ar",
+      "text": "بينام بالسيارة بأي مشوار",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0014",
+      "lang": "ar",
+      "text": "بيخسر وبيقول اللعبة مش عادلة",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0015",
+      "lang": "ar",
+      "text": "بيحفظ أغاني ما بيفهم كلماتها",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0016",
+      "lang": "ar",
+      "text": "بيعزم الكل وبينسى يحجز",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0017",
+      "lang": "ar",
+      "text": "بيشتري أشياء ما بيحتاجها",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0018",
+      "lang": "ar",
+      "text": "بيقول خمس دقايق وبتصير ساعة",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0019",
+      "lang": "ar",
+      "text": "بيعلّق على كل مسلسل قبل ما يخلص",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0020",
+      "lang": "ar",
+      "text": "بيرقص أول واحد بالعرس",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0021",
+      "lang": "ar",
+      "text": "بيضيّع مفاتيحه كل يوم",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0022",
+      "lang": "ar",
+      "text": "بيبعث رسائل صوتية طويلة",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0023",
+      "lang": "ar",
+      "text": "بيخطط للسفرة وما بيسافر",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0024",
+      "lang": "ar",
+      "text": "بيصحى أبكر واحد",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0025",
+      "lang": "ar",
+      "text": "بيكون عنده شاحن دايماً",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0026",
+      "lang": "ar",
+      "text": "بيعطي نصايح ما حدا طلبها",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0027",
+      "lang": "ar",
+      "text": "بيحكي مع الحيوانات بالشارع",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0028",
+      "lang": "ar",
+      "text": "بيعيد نفس القصة كل سهرة",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0029",
+      "lang": "ar",
+      "text": "بيلعب على التلفون وقت الأكل",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    },
+    {
+      "id": "trait-0030",
+      "lang": "ar",
+      "text": "بيقلّد الناس أحسن من الكل",
+      "mood_min": "family",
+      "banned": false,
+      "status": "draft"
+    }
+  ]
+}

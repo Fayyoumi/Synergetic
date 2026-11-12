@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>Sahra Arabic charades</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2B1B17;text-decoration:none}a:hover{color:#E8412C}
+button:focus-visible,a:focus-visible{outline:3px solid #12A6A0;outline-offset:2px}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 844px; box-sizing: border-box; background: {{pageBg}}; color: #2B1B17; font-family: 'IBM Plex Sans Arabic', sans-serif; display: flex; flex-direction: column; gap: 14px; padding: 18px">
+
+<div style="display: flex; align-items: center; gap: 10px">
+<a href="Play.dc.html" aria-label="Back to games" style="width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; border: 2px solid #2B1B17; display: flex; align-items: center; justify-content: center; flex: none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#2B1B17" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></a>
+<div style="flex: 1; font-family: 'Lalezar', sans-serif; font-size: 28px; padding-top: 4px">بدون كلام</div>
+<div style="font-size: 13px; font-weight: 700; background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 999px; padding: 4px 10px">الجولة {{roundText}} من ٣</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{teams}}" as="t" hint-placeholder-count="2">
+<div style="background: {{t.bg}}; border: {{t.border}}; border-radius: 16px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+<div style="font-weight: 700; font-size: 14px">{{t.name}}</div>
+<div style="font-family: 'Lalezar', sans-serif; font-size: 30px; line-height: 1">{{t.score}}</div>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{isReady}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px">
+<div style="background: #FFFFFF; border: 3px solid #2B1B17; border-radius: 24px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-family: 'Lalezar', sans-serif; font-size: 30px; line-height: 1.2">دور {{teamName}}</div>
+<div style="font-size: 15px; line-height: 1.6">واحد من الفريق يمسك الجوال ويمثّل الكلمة بدون ولا كلمة. الفريق عنده ٦٠ ثانية يخمّن أكبر عدد كلمات.</div>
+<div style="font-size: 13px; line-height: 1.6; color: #4A3630">سهل = ١٠٠ · متوسط = ٢٠٠ · صعب = ٣٠٠ · ٣ تخطّيات بس بكل دور · الفريق الثاني بيقدر يسرق الكلمة بنص النقاط</div>
+</div>
+<div style="font-weight: 700; font-size: 15px">الفئات بهالدور</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<div style="font-size: 14px; font-weight: 600; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 6px 12px">أكلات</div>
+<div style="font-size: 14px; font-weight: 600; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 6px 12px">مهن</div>
+<div style="font-size: 14px; font-weight: 600; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 6px 12px">أمثال شعبية</div>
+<div style="font-size: 14px; font-weight: 600; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 6px 12px">مسلسلات</div>
+<div style="font-size: 14px; font-weight: 600; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 6px 12px">مواقف يومية</div>
+</div>
+<button type="button" onClick="{{startTurn}}" style="margin-top: auto; font-family: 'Lalezar', sans-serif; font-size: 28px; background: #E8412C; color: #FFF4DE; border: 3px solid #2B1B17; border-radius: 18px; min-height: 64px; padding-top: 4px; cursor: pointer">ابدأ الـ ٦٠ ثانية</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isTurn}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="font-size: 14px; font-weight: 700">{{teamName}} · {{turnPointsText}} نقطة بهالدور</div>
+<div role="timer" style="width: 64px; height: 64px; border-radius: 50%; border: 3px solid #2B1B17; background: {{timerBg}}; display: flex; align-items: center; justify-content: center; font-family: 'Lalezar', sans-serif; font-size: 28px; padding-top: 4px; box-sizing: border-box">{{timeText}}</div>
+</div>
+<div style="flex: 1; background: #FFFFFF; border: 3px solid #2B1B17; border-radius: 28px; padding: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center">
+<div style="display: flex; gap: 8px">
+<div style="font-size: 13px; font-weight: 700; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 3px 10px">{{wordCat}}</div>
+<div style="font-size: 13px; font-weight: 700; background: {{wordDiffBg}}; color: {{wordDiffFg}}; border: 2px solid #2B1B17; border-radius: 999px; padding: 3px 10px">{{wordDiff}}</div>
+</div>
+<div style="font-family: 'Lalezar', sans-serif; font-size: 48px; line-height: 1.2">{{word}}</div>
+<div style="font-size: 13px; color: #6B5147">ممنوع الكلام والإشارة للحروف</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button type="button" onClick="{{skip}}" disabled="{{skipDisabled}}" style="font-family: 'Lalezar', sans-serif; font-size: 24px; background: #FFFFFF; color: #2B1B17; border: 3px solid #2B1B17; border-radius: 18px; min-height: 72px; padding-top: 4px; cursor: pointer; opacity: {{skipOpacity}}">تخطّى ({{skipsLeft}})</button>
+<button type="button" onClick="{{got}}" style="font-family: 'Lalezar', sans-serif; font-size: 28px; background: #12A6A0; color: #2B1B17; border: 3px solid #2B1B17; border-radius: 18px; min-height: 72px; padding-top: 4px; cursor: pointer">عرفوها!</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isSummary}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px">
+<div style="background: #2B1B17; color: #FFF4DE; border-radius: 22px; padding: 18px; text-align: center">
+<div style="font-size: 14px">{{teamName}} جمع بهالدور</div>
+<div style="font-family: 'Lalezar', sans-serif; font-size: 52px; line-height: 1.1; color: #FFC93C">+{{turnPointsText}}</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{log}}" as="w" hint-placeholder-count="3">
+<div style="display: flex; justify-content: space-between; align-items: center; background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 14px; padding: 10px 14px; font-weight: 600; font-size: 15px"><span>{{w.word}}</span><span style="color: {{w.color}}">{{w.res}}</span></div>
+</sc-for>
+</div>
+<button type="button" onClick="{{nextTurn}}" style="margin-top: auto; font-family: 'Lalezar', sans-serif; font-size: 24px; background: #E8412C; color: #FFF4DE; border: 3px solid #2B1B17; border-radius: 18px; min-height: 60px; padding-top: 4px; cursor: pointer">{{nextLabel}}</button>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { screen: 'ready', team: 0, round: 1, scores: [0, 0], timeLeft: 60, wi: 0, skips: 3, turnPts: 0, log: [] };
+}
+componentDidMount() {
+this.timer = setInterval(() => {
+const s = this.state;
+if (s.screen !== 'turn') return;
+if (s.timeLeft <= 1) this.endTurn(); else this.setState({ timeLeft: s.timeLeft - 1 });
+}, 1000);
+}
+componentWillUnmount() { clearInterval(this.timer); }
+words() {
+return [
+{ w: 'منسف', c: 'أكلات', d: 1 }, { w: 'شرطي مرور', c: 'مهن', d: 1 }, { w: 'الصبر مفتاح الفرج', c: 'أمثال شعبية', d: 3 },
+{ w: 'زحمة سير', c: 'مواقف يومية', d: 2 }, { w: 'كنافة', c: 'أكلات', d: 1 }, { w: 'طبيب أسنان', c: 'مهن', d: 2 },
+{ w: 'باب الحارة', c: 'مسلسلات', d: 2 }, { w: 'تيتا بتعمل مقلوبة', c: 'مواقف يومية', d: 3 }, { w: 'حلاق', c: 'مهن', d: 1 },
+{ w: 'اللي استحوا ماتوا', c: 'أمثال شعبية', d: 3 }, { w: 'فلافل', c: 'أكلات', d: 1 }, { w: 'عريس متأخر على عرسه', c: 'مواقف يومية', d: 3 },
+{ w: 'دبكة', c: 'مواقف يومية', d: 1 }, { w: 'خبّاز', c: 'مهن', d: 1 }, { w: 'سيارة عالقة بالثلج', c: 'مواقف يومية', d: 2 }
+];
+}
+ar(n) { return String(n).replace(/[0-9]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.charAt(Number(d))); }
+fmt(n) { return this.ar(n.toLocaleString('en-US')).replace(/,/g, '٬'); }
+endTurn() {
+const s = this.state;
+const scores = s.scores.slice(); scores[s.team] += s.turnPts;
+this.setState({ screen: 'summary', scores });
+}
+renderVals() {
+const s = this.state, W = this.words();
+const cur = W[s.wi % W.length];
+const names = ['فريق الشاي', 'فريق القهوة'];
+const diffLabel = { 1: 'سهل · ١٠٠', 2: 'متوسط · ٢٠٠', 3: 'صعب · ٣٠٠' };
+const diffCol = { 1: ['#FFFFFF', '#2B1B17'], 2: ['#12A6A0', '#2B1B17'], 3: ['#E8412C', '#FFF4DE'] };
+const teams = names.map((name, i) => ({ name, score: this.fmt(s.scores[i] + (s.screen === 'turn' && i === s.team ? s.turnPts : 0)), bg: i === s.team ? '#FFC93C' : '#FFFFFF', border: i === s.team ? '3px solid #2B1B17' : '2px solid #2B1B17' }));
+const finished = s.round === 3 && s.team === 1;
+let nextLabel = 'دور ' + names[1 - s.team];
+if (finished) nextLabel = (s.scores[0] === s.scores[1] ? 'تعادل! ' : (s.scores[0] > s.scores[1] ? names[0] : names[1]) + ' ربح! ') + 'لعبة جديدة';
+return {
+pageBg: s.screen === 'turn' ? '#FFC93C' : '#FFF4DE',
+roundText: this.ar(s.round),
+teams, teamName: names[s.team],
+isReady: s.screen === 'ready', isTurn: s.screen === 'turn', isSummary: s.screen === 'summary',
+startTurn: () => this.setState({ screen: 'turn', timeLeft: 60, skips: 3, turnPts: 0, log: [] }),
+timeText: this.ar(s.timeLeft), timerBg: s.timeLeft <= 10 ? '#E8412C' : '#FFFFFF',
+word: cur.w, wordCat: cur.c, wordDiff: diffLabel[cur.d], wordDiffBg: diffCol[cur.d][0], wordDiffFg: diffCol[cur.d][1],
+turnPointsText: this.fmt(s.turnPts),
+skipsLeft: this.ar(s.skips), skipDisabled: s.skips <= 0, skipOpacity: s.skips <= 0 ? 0.4 : 1,
+skip: () => { if (s.skips > 0) this.setState({ wi: s.wi + 1, skips: s.skips - 1, log: s.log.concat([{ word: cur.w, res: 'تخطّوها', color: '#6B5147' }]) }); },
+got: () => this.setState({ wi: s.wi + 1, turnPts: s.turnPts + cur.d * 100, log: s.log.concat([{ word: cur.w, res: '+' + this.fmt(cur.d * 100), color: '#12A6A0' }]) }),
+log: s.log.length ? s.log : [{ word: 'ولا كلمة!', res: '٠', color: '#E8412C' }],
+nextLabel,
+nextTurn: () => {
+if (finished) this.setState({ screen: 'ready', team: 0, round: 1, scores: [0, 0] });
+else this.setState({ screen: 'ready', team: 1 - s.team, round: s.team === 1 ? s.round + 1 : s.round });
+}
+};
+}
+}
+</script>
+</body>
+</html>

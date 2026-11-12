@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "Sahra",
+    "description": "Play, compete and laugh with your people"
+  },
+  "common": {
+    "appName": "Sahra",
+    "tagline": "Play, compete and laugh with your people",
+    "kassa": "Kassa",
+    "soon": "Coming soon",
+    "back": "Back",
+    "home": "Home"
+  },
+  "lang": {
+    "label": "Language",
+    "switchTo": "العربية",
+    "switchToAria": "التبديل إلى العربية"
+  },
+  "home": {
+    "greetingGuest": "Welcome! I'm Kassa, your host tonight. Ready for the sahra?",
+    "groupsTitle": "Your groups",
+    "groupsEmpty": "No groups yet. Your first night in becomes your first group.",
+    "playNow": "Play now"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "I looked in every glass and couldn't find it.",
+    "cta": "Back home"
+  },
+  "legal": {
+    "privacyTitle": "Privacy policy",
+    "termsTitle": "Terms of use",
+    "draftNotice": "Placeholder text: TODO: lawyer review",
+    "privacyBody": "This is placeholder privacy text. Secret answers are shown only to the people at that gathering and are deleted after 30 days unless the group saves them. You can delete your data from your profile at any time.",
+    "termsBody": "This is placeholder terms text. Sahra is a game for fun: there are no cash prizes and no paid entry."
+  },
+  "design": {
+    "title": "Design guide",
+    "colours": "Colours",
+    "type": "Type",
+    "displaySample": "Who's it?",
+    "bodySample": "Vote fast, Kassa doesn't wait.",
+    "buttons": "Buttons",
+    "primary": "Let's go!",
+    "group": "Group",
+    "solo": "Solo",
+    "selected": "Selected",
+    "kassa": "Kassa",
+    "expressions": {
+      "neutral": "Neutral",
+      "cheeky": "Cheeky",
+      "shocked": "Shocked",
+      "laughing": "Laughing",
+      "sad": "Sad"
+    },
+    "digits": "Digits",
+    "roomCodeLabel": "Room codes always use Western digits",
+    "session": "Session",
+    "sessionNone": "Supabase not configured (no keys)",
+    "sessionLoading": "Signing in as a guest…",
+    "sessionGuest": "Anonymous guest: {id}",
+    "sessionError": "Sign-in failed: {message}"
+  }
+}

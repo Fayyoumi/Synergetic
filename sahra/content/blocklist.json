@@ -1,0 +1,5 @@
+{
+  "_note": "Basic starter list for masking names and prompt answers. Extend it from real pilot reports. Matches are masked with *** and the entry is flagged.",
+  "ar": ["كس", "كسم", "كسمك", "كس امك", "زب", "زبي", "طيز", "شرموط", "شرموطة", "منيوك", "منيوكة", "قحبة", "عرص", "متناك", "نيك", "انيك", "خول", "لبوة", "ابن الحرام", "يلعن ابوك", "يلعن دينك", "حمار", "كلب", "حقير", "تفو"],
+  "en": ["fuck", "fucking", "fucker", "motherfucker", "shit", "bullshit", "bitch", "bastard", "asshole", "dick", "dickhead", "cunt", "pussy", "whore", "slut", "wanker", "twat", "prick", "retard", "faggot", "nigger", "nigga"]
+}

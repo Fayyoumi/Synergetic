@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8">
+<title>Sahra play hub and trivia night</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lalezar&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2B1B17;text-decoration:none}a:hover{color:#E8412C}
+button:focus-visible,a:focus-visible{outline:3px solid #12A6A0;outline-offset:2px}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 844px; box-sizing: border-box; background: #FFF4DE; color: #2B1B17; font-family: 'IBM Plex Sans Arabic', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="display: flex; align-items: center; gap: 10px; padding: 18px 18px 10px; flex: none">
+<sc-if value="{{showBack}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{goBack}}" aria-label="Back" style="width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; border: 2px solid #2B1B17; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#2B1B17" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+</sc-if>
+<div style="flex: 1; font-family: 'Lalezar', sans-serif; font-size: 26px; line-height: 1.1; padding-top: 4px">{{headerTitle}}</div>
+<sc-if value="{{showScore}}" hint-placeholder-val="{{ false }}">
+<div style="font-family: 'Lalezar', sans-serif; font-size: 22px; background: #2B1B17; color: #FFC93C; border-radius: 999px; padding: 4px 14px 0">{{scoreText}}</div>
+</sc-if>
+</div>
+
+<sc-if value="{{isMode}}" hint-placeholder-val="{{ true }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 6px 18px 18px">
+<div style="font-size: 16px; line-height: 1.5; color: #4A3630">كيف بدك تلعب الليلة؟</div>
+<button type="button" onClick="{{pickSolo}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: right; background: #12A6A0; color: #2B1B17; border: 3px solid #2B1B17; border-radius: 24px; padding: 22px; cursor: pointer; font-family: 'IBM Plex Sans Arabic', sans-serif">
+<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#2B1B17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>
+<span style="font-family: 'Lalezar', sans-serif; font-size: 36px; line-height: 1">فردي</span>
+<span style="font-size: 15px; line-height: 1.5">ليلة أسئلة، تحدي اليوم، الموت المفاجئ. نافس العرب كلهم على لوحة الصدارة.</span>
+</button>
+<button type="button" onClick="{{pickGroup}}" style="display: flex; flex-direction: column; align-items: flex-start; gap: 6px; text-align: right; background: #E8412C; color: #FFF4DE; border: 3px solid #2B1B17; border-radius: 24px; padding: 22px; cursor: pointer; font-family: 'IBM Plex Sans Arabic', sans-serif">
+<svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#FFF4DE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c1.9.8 3.1 2.6 3.5 5.2"/></svg>
+<span style="font-family: 'Lalezar', sans-serif; font-size: 36px; line-height: 1">جماعي</span>
+<span style="font-size: 15px; line-height: 1.5">أسئلة بفرق، مافيا، تمثيل صامت، وألعاب عن ناسك. على شاشة وحدة والكل من جواله.</span>
+</button>
+<div style="margin-top: auto; background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 18px; padding: 12px 14px; display: flex; align-items: center; gap: 12px">
+<div style="font-family: 'Lalezar', sans-serif; font-size: 28px; color: #E8412C">٥</div>
+<div style="font-size: 14px; line-height: 1.45">أيام متتالية. العب اليوم عشان ما تخسر السلسلة!</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isGames}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 6px 18px 18px; overflow: auto">
+<sc-for list="{{playable}}" as="g" hint-placeholder-count="3">
+<button type="button" onClick="{{g.pick}}" style="display: flex; align-items: center; gap: 12px; text-align: right; background: {{g.bg}}; color: {{g.fg}}; border: 2px solid #2B1B17; border-radius: 18px; padding: 14px; min-height: 72px; cursor: pointer; font-family: 'IBM Plex Sans Arabic', sans-serif">
+<span style="display: flex; flex-direction: column; gap: 2px; flex: 1">
+<span style="font-family: 'Lalezar', sans-serif; font-size: 24px; line-height: 1.1">{{g.name}}</span>
+<span style="font-size: 13px; line-height: 1.4">{{g.meta}}</span>
+</span>
+<span style="font-size: 12px; font-weight: 700; background: #FFF4DE; color: #2B1B17; border: 2px solid #2B1B17; border-radius: 999px; padding: 3px 10px; flex: none">{{g.tag}}</span>
+</button>
+</sc-for>
+<sc-for list="{{links}}" as="l" hint-placeholder-count="3">
+<a href="{{l.href}}" style="display: flex; align-items: center; gap: 12px; background: {{l.bg}}; color: {{l.fg}}; border: 2px solid #2B1B17; border-radius: 18px; padding: 14px; min-height: 72px; box-sizing: border-box">
+<span style="display: flex; flex-direction: column; gap: 2px; flex: 1">
+<span style="font-family: 'Lalezar', sans-serif; font-size: 24px; line-height: 1.1">{{l.name}}</span>
+<span style="font-size: 13px; line-height: 1.4">{{l.meta}}</span>
+</span>
+<span style="font-size: 12px; font-weight: 700; background: #FFF4DE; color: #2B1B17; border: 2px solid #2B1B17; border-radius: 999px; padding: 3px 10px; flex: none">{{l.tag}}</span>
+</a>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{isSetup}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 4px 18px 18px; min-height: 0">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-weight: 700; font-size: 15px">اختار الفئات <span style="font-weight: 400; color: #6B5147">({{catCount}} مختارة)</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{cats}}" as="c" hint-placeholder-count="12">
+<button type="button" onClick="{{c.toggle}}" aria-pressed="{{c.pressed}}" style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 600; font-size: 14px; background: {{c.bg}}; color: #2B1B17; border: 2px solid #2B1B17; border-radius: 999px; padding: 8px 12px; min-height: 40px; cursor: pointer">{{c.label}}</button>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-weight: 700; font-size: 15px">مستوى الصعوبة</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{diffs}}" as="d" hint-placeholder-count="3">
+<button type="button" onClick="{{d.pick}}" aria-pressed="{{d.pressed}}" style="display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: 'IBM Plex Sans Arabic', sans-serif; background: {{d.bg}}; color: #2B1B17; border: {{d.border}}; border-radius: 16px; padding: 10px 6px; min-height: 64px; cursor: pointer">
+<span style="font-family: 'Lalezar', sans-serif; font-size: 22px; line-height: 1.1">{{d.label}}</span>
+<span style="font-size: 12px; font-weight: 600">{{d.points}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+<div style="background: #2B1B17; color: #FFF4DE; border-radius: 18px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>عدد الأسئلة</span><span style="font-weight: 700">{{qCountText}}</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 14px"><span>أعلى نتيجة ممكنة</span><span style="font-family: 'Lalezar', sans-serif; font-size: 22px; color: #FFC93C">{{maxScoreText}}</span></div>
+<div style="font-size: 12px; line-height: 1.5; color: #E9DCC4">النقاط = نقاط الصعوبة + بونص السرعة (لحد ٥٠٪) + بونص السلسلة (لحد ٥٠٪). جوكر ×٢ مرة وحدة.</div>
+</div>
+<button type="button" onClick="{{start}}" style="margin-top: auto; font-family: 'Lalezar', sans-serif; font-size: 26px; background: #E8412C; color: #FFF4DE; border: 3px solid #2B1B17; border-radius: 18px; min-height: 60px; padding-top: 4px; cursor: pointer">يلا نبدأ!</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isPlay}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 0 18px 18px; min-height: 0">
+<div style="display: flex; align-items: center; gap: 10px">
+<div style="flex: 1; height: 10px; background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 8px; overflow: hidden"><div style="width: {{progressWidth}}; height: 100%; background: #12A6A0"></div></div>
+<div style="font-size: 13px; font-weight: 700">{{progressText}}</div>
+<div role="timer" aria-label="seconds left" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #2B1B17; background: {{timerBg}}; display: flex; align-items: center; justify-content: center; font-family: 'Lalezar', sans-serif; font-size: 22px; padding-top: 3px; box-sizing: border-box">{{timeText}}</div>
+</div>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<div style="font-size: 13px; font-weight: 700; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 3px 10px">{{qCat}}</div>
+<div style="font-size: 13px; font-weight: 700; background: {{qDiffBg}}; color: {{qDiffFg}}; border: 2px solid #2B1B17; border-radius: 999px; padding: 3px 10px">{{qDiff}}</div>
+<sc-if value="{{hasStreak}}" hint-placeholder-val="{{ false }}"><div style="font-size: 13px; font-weight: 700; background: #E8412C; color: #FFF4DE; border: 2px solid #2B1B17; border-radius: 999px; padding: 3px 10px">{{streakText}}</div></sc-if>
+</div>
+<div style="font-family: 'Lalezar', sans-serif; font-size: 30px; line-height: 1.3">{{qText}}</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+<button type="button" onClick="{{o.pick}}" disabled="{{o.disabled}}" style="display: flex; align-items: center; gap: 12px; width: 100%; text-align: right; font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: 17px; background: {{o.bg}}; color: {{o.fg}}; border: 2px solid #2B1B17; border-radius: 16px; padding: 12px 14px; min-height: 54px; cursor: pointer; opacity: {{o.opacity}}">
+<span style="width: 30px; height: 30px; border-radius: 10px; background: #2B1B17; color: #FFF4DE; display: flex; align-items: center; justify-content: center; font-family: 'Lalezar', sans-serif; font-size: 16px; flex: none">{{o.letter}}</span>
+<span style="flex: 1">{{o.label}}</span>
+<span style="font-size: 13px">{{o.note}}</span>
+</button>
+</sc-for>
+</div>
+<sc-if value="{{notAnswered}}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: auto">
+<button type="button" onClick="{{useFifty}}" disabled="{{fiftyDisabled}}" style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: 15px; background: #FFFFFF; color: #2B1B17; border: 2px solid #2B1B17; border-radius: 14px; min-height: 48px; cursor: pointer; opacity: {{fiftyOpacity}}">جوكر ٥٠:٥٠</button>
+<button type="button" onClick="{{useDouble}}" disabled="{{doubleDisabled}}" style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: 15px; background: {{doubleBg}}; color: #2B1B17; border: 2px solid #2B1B17; border-radius: 14px; min-height: 48px; cursor: pointer; opacity: {{doubleOpacity}}">{{doubleLabel}}</button>
+</div>
+</sc-if>
+<sc-if value="{{answeredFlag}}" hint-placeholder-val="{{ false }}">
+<div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+<div style="background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'Lalezar', sans-serif; font-size: 24px; color: {{gainColor}}">{{gainText}}</div>
+<div style="font-size: 13px; line-height: 1.5; color: #4A3630">{{breakdown}}</div>
+</div>
+<button type="button" onClick="{{next}}" style="font-family: 'Lalezar', sans-serif; font-size: 22px; background: #2B1B17; color: #FFC93C; border: none; border-radius: 16px; min-height: 54px; padding-top: 4px; cursor: pointer">{{nextLabel}}</button>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{isResult}}" hint-placeholder-val="{{ false }}">
+<div style="flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 0 18px 18px; min-height: 0">
+<div style="background: #E8412C; color: #FFF4DE; border: 3px solid #2B1B17; border-radius: 24px; padding: 18px; text-align: center; display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 14px; font-weight: 700">نتيجتك</div>
+<div style="font-family: 'Lalezar', sans-serif; font-size: 60px; line-height: 1">{{scoreText}}</div>
+<div style="font-size: 14px">{{resultLine}}</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 14px; padding: 10px 6px; text-align: center"><div style="font-family: 'Lalezar', sans-serif; font-size: 24px">{{correctText}}</div><div style="font-size: 12px">صح</div></div>
+<div style="background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 14px; padding: 10px 6px; text-align: center"><div style="font-family: 'Lalezar', sans-serif; font-size: 24px">{{bestStreakText}}</div><div style="font-size: 12px">أطول سلسلة</div></div>
+<div style="background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 14px; padding: 10px 6px; text-align: center"><div style="font-family: 'Lalezar', sans-serif; font-size: 24px">{{xpText}}</div><div style="font-size: 12px">نقاط خبرة</div></div>
+</div>
+<div style="background: #12A6A0; border: 2px solid #2B1B17; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 14px"><span>{{leagueName}}</span><span>{{leagueRank}}</span></div>
+<div style="height: 12px; background: #FFF4DE; border: 2px solid #2B1B17; border-radius: 8px; overflow: hidden"><div style="width: {{leagueWidth}}; height: 100%; background: #FFC93C"></div></div>
+<div style="font-size: 13px">{{leagueHint}}</div>
+</div>
+<sc-if value="{{isGroupResult}}" hint-placeholder-val="{{ false }}">
+<div style="background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 16px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; font-weight: 700"><span>فريقكم {{scoreText}}</span><span style="color: #6B5147">ضد</span><span>فريق الشلة ٢٬١٠٠</span></div>
+</sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{badges}}" as="b" hint-placeholder-count="2"><div style="font-size: 13px; font-weight: 700; background: #FFC93C; border: 2px solid #2B1B17; border-radius: 999px; padding: 4px 12px">{{b.label}}</div></sc-for>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: auto">
+<button type="button" onClick="{{again}}" style="font-family: 'Lalezar', sans-serif; font-size: 22px; background: #2B1B17; color: #FFC93C; border: none; border-radius: 16px; min-height: 54px; padding-top: 4px; cursor: pointer">جولة ثانية</button>
+<a href="ShareCard.dc.html" style="display: flex; align-items: center; justify-content: center; font-family: 'Lalezar', sans-serif; font-size: 22px; background: #FFFFFF; border: 2px solid #2B1B17; border-radius: 16px; min-height: 54px; padding-top: 4px; box-sizing: border-box">شارك النتيجة</a>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { screen: 'mode', mode: 'solo', game: 'trivia', cats: ['geo', 'sport', 'food', 'tv'], diff: 'mixed', set: [], qi: 0, answered: null, timeLeft: 15, score: 0, correct: 0, streak: 0, best: 0, fiftyUsed: false, fiftyOn: false, doubleUsed: false, doubleOn: false, last: null };
+}
+componentDidMount() {
+this.timer = setInterval(() => {
+const s = this.state;
+if (s.screen !== 'play' || s.answered !== null) return;
+if (s.timeLeft <= 1) this.answer(-1); else this.setState({ timeLeft: s.timeLeft - 1 });
+}, 1000);
+}
+componentWillUnmount() { clearInterval(this.timer); }
+pool() {
+return [
+{ cat: 'geo', d: 'easy', q: 'ما هي عاصمة الأردن؟', o: ['عمّان', 'إربد', 'العقبة', 'الزرقاء'], a: 0 },
+{ cat: 'geo', d: 'medium', q: 'أي دولة عربية فيها أكبر عدد سكان؟', o: ['السعودية', 'مصر', 'الجزائر', 'العراق'], a: 1 },
+{ cat: 'geo', d: 'legend', q: 'ما هي أعلى قمة جبلية في الأردن؟', o: ['جبل أم الدامي', 'جبل رم', 'جبل نيبو', 'جبل عجلون'], a: 0 },
+{ cat: 'sport', d: 'medium', q: 'في أي سنة استضافت قطر كأس العالم لكرة القدم؟', o: ['٢٠١٨', '٢٠٢٦', '٢٠٢٢', '٢٠١٤'], a: 2 },
+{ cat: 'sport', d: 'hard', q: 'كم لاعباً لكل فريق داخل ملعب كرة اليد؟', o: ['٥', '٦', '٧', '١١'], a: 2 },
+{ cat: 'food', d: 'easy', q: 'المنسف هو الطبق الوطني لأي دولة؟', o: ['لبنان', 'الأردن', 'المغرب', 'اليمن'], a: 1 },
+{ cat: 'hist', d: 'hard', q: 'في أي عام نال الأردن استقلاله؟', o: ['١٩٢١', '١٩٥٢', '١٩٦٧', '١٩٤٦'], a: 3 },
+{ cat: 'hist', d: 'legend', q: 'أي مدينة كانت تُعرف قديماً باسم «فيلادلفيا»؟', o: ['دمشق', 'عمّان', 'بيروت', 'القدس'], a: 1 },
+{ cat: 'sci', d: 'medium', q: 'ما هو أقرب كوكب إلى الشمس؟', o: ['الزهرة', 'المريخ', 'عطارد', 'الأرض'], a: 2 },
+{ cat: 'sci', d: 'easy', q: 'كم يوماً في السنة الكبيسة؟', o: ['٣٦٥', '٣٦٦', '٣٦٤', '٣٦٠'], a: 1 },
+{ cat: 'lang', d: 'hard', q: 'كم عدد حروف الأبجدية العربية؟', o: ['٢٦', '٢٨', '٢٩', '٣٠'], a: 1 },
+{ cat: 'tv', d: 'medium', q: 'مسلسل «باب الحارة» من إنتاج أي بلد؟', o: ['مصر', 'لبنان', 'سوريا', 'الأردن'], a: 2 }
+];
+}
+buildSet() {
+const s = this.state, pool = this.pool();
+const okD = { easy: ['easy', 'medium'], mixed: ['easy', 'medium', 'hard', 'legend'], hard: ['medium', 'hard', 'legend'] }[s.diff];
+let n = 5;
+if (s.game === 'daily') n = 1;
+if (s.game === 'sudden') n = 12;
+let picked = pool.filter((q) => s.cats.indexOf(q.cat) >= 0 && okD.indexOf(q.d) >= 0);
+const rest = pool.filter((q) => picked.indexOf(q) < 0 && okD.indexOf(q.d) >= 0);
+picked = picked.concat(rest);
+if (s.game === 'daily') picked = [pool[7]];
+return picked.slice(0, n);
+}
+base(d) { return { easy: 100, medium: 200, hard: 300, legend: 500 }[d]; }
+answer(i) {
+const s = this.state, q = s.set[s.qi];
+const ok = i === q.a;
+let gain = 0, speed = 0, streakB = 0;
+const b = this.base(q.d);
+if (ok) {
+speed = Math.round(b * 0.5 * s.timeLeft / 15);
+streakB = Math.round((b + speed) * Math.min(s.streak, 5) * 0.1);
+gain = (b + speed + streakB) * (s.doubleOn ? 2 : 1);
+}
+const streak = ok ? s.streak + 1 : 0;
+this.setState({ answered: i, score: s.score + gain, correct: s.correct + (ok ? 1 : 0), streak, best: Math.max(s.best, streak), last: { ok, gain, b, speed, streakB, dbl: s.doubleOn, timeout: i === -1 }, doubleOn: false });
+}
+ar(n) { return String(n).replace(/[0-9]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.charAt(Number(d))); }
+fmt(n) { return this.ar(n.toLocaleString('en-US')).replace(/,/g, '٬'); }
+renderVals() {
+const s = this.state, ar = (n) => this.ar(n);
+const catDefs = [['geo', 'جغرافيا'], ['sport', 'رياضة'], ['food', 'أكل'], ['hist', 'تاريخ'], ['sci', 'علوم'], ['tv', 'مسلسلات وأفلام'], ['lang', 'لغة عربية'], ['flags', 'أعلام'], ['logos', 'شعارات'], ['music', 'أغاني عربية'], ['riddles', 'ألغاز'], ['maps', 'خرائط']];
+const cats = catDefs.map(([id, label]) => {
+const on = s.cats.indexOf(id) >= 0;
+return { label, pressed: on ? 'true' : 'false', bg: on ? '#FFC93C' : '#FFFFFF', toggle: () => this.setState({ cats: on ? s.cats.filter((c) => c !== id) : s.cats.concat([id]) }) };
+});
+const diffDefs = [['easy', 'سهل', '١٠٠–٢٠٠ للسؤال'], ['mixed', 'منوّع', '١٠٠–٥٠٠ للسؤال'], ['hard', 'صعب', '٢٠٠–٥٠٠ للسؤال']];
+const diffs = diffDefs.map(([id, label, points]) => ({ label, points, pressed: s.diff === id ? 'true' : 'false', bg: s.diff === id ? '#12A6A0' : '#FFFFFF', border: s.diff === id ? '3px solid #2B1B17' : '2px solid #2B1B17', pick: () => this.setState({ diff: id }) }));
+const preview = this.buildSet();
+let max = 0;
+preview.forEach((q, i) => { const b = this.base(q.d) * 1.5; max += Math.round(b * (1 + Math.min(i, 5) * 0.1)); });
+const playableSolo = [
+{ id: 'trivia', name: 'ليلة الأسئلة', meta: '١٢ فئة · ٣ مستويات · ٥ أسئلة', tag: 'فردي', bg: '#FFC93C', fg: '#2B1B17' },
+{ id: 'daily', name: 'تحدي اليوم', meta: 'سؤال واحد لكل العرب، ونفس السؤال للكل', tag: 'يومي', bg: '#12A6A0', fg: '#2B1B17' },
+{ id: 'sudden', name: 'الموت المفاجئ', meta: 'جاوب لحد ما تغلط. غلطة وحدة وبتطلع', tag: 'تحدي', bg: '#E8412C', fg: '#FFF4DE' }
+];
+const playableGroup = [{ id: 'trivia', name: 'ليلة الأسئلة بفرق', meta: 'فريقين أو أكثر، والنتيجة على الشاشة الكبيرة', tag: 'فرق', bg: '#FFC93C', fg: '#2B1B17' }];
+const pickGame = (id) => () => this.setState({ game: id, screen: 'setup' });
+const playable = (s.mode === 'solo' ? playableSolo : playableGroup).map((g) => ({ ...g, pick: pickGame(g.id) }));
+const links = s.mode === 'solo' ? [{ name: 'سمّي الكل', meta: 'سمّي الدول العربية الـ٢٢ بـ ٣ دقائق · قريباً', tag: 'قريباً', href: 'Play.dc.html', bg: '#FFFFFF', fg: '#2B1B17' }] : [
+{ name: 'مافيا', meta: '٥–١٢ لاعب · أدوار محلية وراوي آلي', tag: 'تفكير', href: 'Mafia.dc.html', bg: '#2B1B17', fg: '#FFF4DE' },
+{ name: 'بدون كلام', meta: 'تمثيل صامت بالعربي · فريقين', tag: 'حركة', href: 'Charades.dc.html', bg: '#E8412C', fg: '#FFF4DE' },
+{ name: 'مين فينا؟', meta: 'ألعاب عن ناسك من أجوبتهم السرية', tag: 'ضحك', href: 'Vote.dc.html', bg: '#12A6A0', fg: '#2B1B17' }
+];
+const titles = { mode: 'شو بدك تلعب؟', games: s.mode === 'solo' ? 'ألعاب فردية' : 'ألعاب جماعية', setup: s.game === 'daily' ? 'تحدي اليوم' : (s.game === 'sudden' ? 'الموت المفاجئ' : 'ليلة الأسئلة'), play: 'ليلة الأسئلة', result: 'خلصت الجولة!' };
+const back = { games: 'mode', setup: 'games', play: 'setup', result: 'games' };
+const q = s.set[s.qi];
+const diffName = { easy: 'سهل · ١٠٠', medium: 'متوسط · ٢٠٠', hard: 'صعب · ٣٠٠', legend: 'أسطوري · ٥٠٠' };
+const diffColor = { easy: ['#FFFFFF', '#2B1B17'], medium: ['#12A6A0', '#2B1B17'], hard: ['#E8412C', '#FFF4DE'], legend: ['#2B1B17', '#FFC93C'] };
+const catName = {}; catDefs.forEach(([id, l]) => { catName[id] = l; });
+const letters = ['أ', 'ب', 'ج', 'د'];
+const answered = s.answered !== null;
+const hidden = s.fiftyOn && q ? [0, 1, 2, 3].filter((i) => i !== q.a).slice(0, 2) : [];
+const opts = q ? q.o.map((label, i) => {
+let bg = '#FFFFFF', fg = '#2B1B17', note = '', opacity = 1;
+if (hidden.indexOf(i) >= 0 && !answered) opacity = 0.25;
+if (answered) {
+if (i === q.a) { bg = '#12A6A0'; note = 'صح'; }
+else if (i === s.answered) { bg = '#E8412C'; fg = '#FFF4DE'; note = 'جوابك'; }
+else opacity = 0.5;
+}
+return { label, letter: letters[i], bg, fg, note, opacity, disabled: answered || hidden.indexOf(i) >= 0, pick: () => { if (this.state.answered === null) this.answer(i); } };
+}) : [];
+const L = s.last;
+let gainText = '', breakdown = '', gainColor = '#2B1B17';
+if (L) {
+if (L.ok) { gainText = '+' + this.fmt(L.gain) + ' نقطة'; gainColor = '#12A6A0'; breakdown = 'صعوبة ' + this.fmt(L.b) + ' + سرعة ' + this.fmt(L.speed) + ' + سلسلة ' + this.fmt(L.streakB) + (L.dbl ? ' · مضروبة ×٢' : ''); }
+else { gainText = L.timeout ? 'خلص الوقت!' : 'غلط!'; gainColor = '#E8412C'; breakdown = 'الجواب الصح: ' + q.o[q.a] + '. السلسلة رجعت صفر.'; }
+}
+const lastQ = s.qi >= s.set.length - 1 || (s.game === 'sudden' && L && !L.ok);
+const total = s.set.length;
+const xp = Math.round(s.score / 10);
+const leagueWidth = Math.min(100, 30 + Math.round(s.score / 40)) + '%';
+const rank = s.score >= 2500 ? 1 : s.score >= 1500 ? 3 : s.score >= 800 ? 8 : 17;
+const badges = [];
+if (s.correct === total && total > 1) badges.push({ label: 'علامة كاملة' });
+if (s.best >= 3) badges.push({ label: 'سلسلة نار ' + ar(s.best) });
+if (s.score >= 1500) badges.push({ label: 'عقل ذهبي' });
+if (badges.length === 0) badges.push({ label: 'أول جولة' });
+return {
+showBack: s.screen !== 'mode',
+goBack: () => this.setState({ screen: back[s.screen] || 'mode' }),
+headerTitle: titles[s.screen],
+showScore: s.screen === 'play',
+scoreText: this.fmt(s.score),
+isMode: s.screen === 'mode', isGames: s.screen === 'games', isSetup: s.screen === 'setup', isPlay: s.screen === 'play' && !!q, isResult: s.screen === 'result',
+pickSolo: () => this.setState({ mode: 'solo', screen: 'games' }),
+pickGroup: () => this.setState({ mode: 'group', screen: 'games' }),
+playable, links,
+cats, catCount: ar(s.cats.length), diffs,
+qCountText: s.game === 'sudden' ? 'لحد أول غلطة' : ar(preview.length),
+maxScoreText: this.fmt(max),
+start: () => this.setState({ set: this.buildSet(), qi: 0, answered: null, timeLeft: 15, score: 0, correct: 0, streak: 0, best: 0, fiftyUsed: false, fiftyOn: false, doubleUsed: false, doubleOn: false, last: null, screen: 'play' }),
+progressWidth: total ? Math.round(((s.qi + (answered ? 1 : 0)) / total) * 100) + '%' : '0%',
+progressText: ar(s.qi + 1) + ' / ' + (s.game === 'sudden' ? '∞' : ar(total)),
+timeText: ar(s.timeLeft),
+timerBg: s.timeLeft <= 5 ? '#E8412C' : '#FFC93C',
+qCat: q ? catName[q.cat] : '', qDiff: q ? diffName[q.d] : '',
+qDiffBg: q ? diffColor[q.d][0] : '#FFF', qDiffFg: q ? diffColor[q.d][1] : '#000',
+hasStreak: s.streak >= 2, streakText: 'سلسلة ' + ar(s.streak) + ' · +' + ar(Math.min(s.streak, 5) * 10) + '٪',
+qText: q ? q.q : '',
+opts,
+notAnswered: !answered, answeredFlag: answered,
+useFifty: () => this.setState({ fiftyUsed: true, fiftyOn: true }),
+fiftyDisabled: s.fiftyUsed, fiftyOpacity: s.fiftyUsed ? 0.4 : 1,
+useDouble: () => this.setState({ doubleUsed: true, doubleOn: true }),
+doubleDisabled: s.doubleUsed, doubleOpacity: s.doubleUsed && !s.doubleOn ? 0.4 : 1,
+doubleBg: s.doubleOn ? '#FFC93C' : '#FFFFFF', doubleLabel: s.doubleOn ? '×٢ مفعّل!' : 'جوكر ×٢',
+gainText, breakdown, gainColor,
+nextLabel: lastQ ? 'شوف النتيجة' : 'السؤال الجاي',
+next: () => { if (lastQ) this.setState({ screen: 'result' }); else this.setState({ qi: s.qi + 1, answered: null, timeLeft: 15, fiftyOn: false, last: null }); },
+resultLine: s.game === 'sudden' ? 'وصلت لـ ' + ar(s.correct) + ' أجوبة صح ورا بعض' : ar(s.correct) + ' من ' + ar(total) + ' صح',
+correctText: ar(s.correct), bestStreakText: ar(s.best), xpText: '+' + ar(xp),
+leagueName: 'الدوري الفضي · الأسبوع ٣', leagueRank: 'المركز ' + ar(rank) + ' من ٣٠', leagueWidth,
+leagueHint: rank <= 5 ? 'أول ٥ بيطلعوا للدوري الذهبي يوم الجمعة!' : 'باقي ' + this.fmt(Math.max(100, 1500 - s.score)) + ' نقطة عشان تدخل منطقة الصعود',
+isGroupResult: s.mode === 'group',
+badges,
+again: () => this.setState({ screen: 'setup' })
+};
+}
+}
+</script>
+</body>
+</html>

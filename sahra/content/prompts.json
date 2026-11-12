@@ -1,0 +1,37 @@
+[
+  {
+    "id": "prompt-0001",
+    "lang": "ar",
+    "text": "شو أغرب أكلة بتحبها؟",
+    "mood_min": "family",
+    "status": "approved"
+  },
+  {
+    "id": "prompt-0002",
+    "lang": "ar",
+    "text": "شو الكذبة اللي صدّقتها وإنت صغير لسنين؟",
+    "mood_min": "family",
+    "status": "approved"
+  },
+  {
+    "id": "prompt-0003",
+    "lang": "ar",
+    "text": "مين بالجماعة أكثر واحد بيتأخر؟",
+    "mood_min": "family",
+    "status": "approved"
+  },
+  {
+    "id": "prompt-0004",
+    "lang": "ar",
+    "text": "شو أكثر شي بتخاف منه وما حدا بيعرف؟",
+    "mood_min": "friends",
+    "status": "approved"
+  },
+  {
+    "id": "prompt-0005",
+    "lang": "ar",
+    "text": "شو أغرب هدية أخذتها بحياتك؟",
+    "mood_min": "family",
+    "status": "approved"
+  }
+]

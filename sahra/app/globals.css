@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/* Sahra design tokens. Flat look: no gradients, no shadows. */
+:root {
+  --tomato: #e8412c;
+  --sunflower: #ffc93c;
+  --chair: #12a6a0;
+  --ink: #2b1b17;
+  --cream: #fff4de;
+  --tea: #d9541e;
+  --muted: #6b5147;
+  --bulb-green: #2e8b57;
+  --paper: #ffffff;
+  --glass: #fffdf7;
+}
+
+@theme inline {
+  --color-tomato: var(--tomato);
+  --color-sunflower: var(--sunflower);
+  --color-chair: var(--chair);
+  --color-ink: var(--ink);
+  --color-cream: var(--cream);
+  --color-tea: var(--tea);
+  --color-muted: var(--muted);
+  --color-bulb-green: var(--bulb-green);
+  --color-paper: var(--paper);
+
+  --font-display: var(--font-lalezar), var(--font-plex-arabic), sans-serif;
+  --font-sans: var(--font-plex-arabic), system-ui, sans-serif;
+
+  --radius-card: 20px;
+  --radius-button: 16px;
+}
+
+html {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Visible focus ring everywhere: 3px turquoise. */
+:focus-visible {
+  outline: 3px solid var(--chair);
+  outline-offset: 3px;
+}
+
+@utility ink-border {
+  border: 2px solid var(--ink);
+}
+
+@utility ink-border-thick {
+  border: 4px solid var(--ink);
+}
+
+/* Lalezar sits high in its box; nudge it so it centres in buttons. */
+@utility display-text {
+  font-family: var(--font-display);
+  line-height: 1.15;
+  padding-top: 0.12em;
+}
+
+/* Flip direction-sensitive icons (back arrows, chevrons) in RTL. */
+[dir="rtl"] .flip-rtl {
+  transform: scaleX(-1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
