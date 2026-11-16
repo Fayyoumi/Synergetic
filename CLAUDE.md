@@ -117,6 +117,17 @@ design-reference/        PNG screenshots of every screen
 - UI: `components/trivia/HostTrivia.tsx` (TV) and `PhoneTrivia.tsx`. Connection badges and toasts stay visible during the game.
 - No jokers in team mode (MVP).
 
+**Charades (Milestone 5).**
+- **Logic:** `lib/game/charades.ts` is the pure reducer: `lobby → turn_ready → turn_active → turn_summary → … → final`. There are 2 teams × 3 rounds = 6 turns of 60 s, alternating teams, with the actor rotating within each team.
+- **Scoring:** a guessed word scores `charadesPoints` (100/200/300). Each turn allows 3 skips worth 0. A steal claims only the word just skipped, for half points (`stealPoints`), until the next action; it's also allowed on the turn summary.
+- **Deck:** skipped words that weren't stolen, and the unfinished word, go back into the deck. A turn ends early if the deck runs out.
+- **Controls:** the host or the current actor can begin, got_it, skip and steal; any member can send `timeup`.
+- **Server:** `lib/server/charadesGame.ts`, reached through the same `/api/rooms/[code]/game` route. `RoomGameService` dispatches on `rooms.game`.
+- **The word is private:** it's sent only on the actor's private channel (`room:CODE:p:SEAT`, a `secret` event), and `GET /api/rooms/[code]/secret` re-syncs it for the actor only. Public state never contains the current word, and skipped words stay hidden until stolen or the turn ends.
+- **Final:** each player's points equal their team's score (for XP).
+- **UI:** `components/charades/*`.
+- **Team names** (all team games): فريق الشاي / فريق القهوة (Team Tea / Team Coffee), as in the designs.
+
 **Spec rules (Milestones 4–6 build on these):**
 - One Supabase Realtime channel per room, `room:{code}`. Presence holds the player list and broadcast carries game messages. Codes are 4 random digits, unique among non-ended rooms (partial unique index). Rooms expire after 6 hours of inactivity.
 - **The host screen is the authority.** It runs the reducer state machine and broadcasts the full public state after every change. Phones send intents only (`answer`, `vote`, `skip`, `got_it`, `steal`, `ready`), and the host ignores invalid or late ones.

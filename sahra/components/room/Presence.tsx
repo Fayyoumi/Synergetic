@@ -18,7 +18,7 @@ export function ConnBadge({ status, large }: { status: ConnStatus; large?: boole
   const t = useTranslations("conn");
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full ink-border bg-paper px-2 py-0.5 font-semibold ${large ? "text-lg" : "text-xs"}`}
+      className={`inline-flex w-fit items-center gap-1.5 rounded-full ink-border bg-paper px-2 py-0.5 font-semibold ${large ? "text-lg" : "text-xs"}`}
       data-status={status}
     >
       <span aria-hidden="true" className={`inline-block rounded-full ink-border ${dot[status]} ${large ? "h-3.5 w-3.5" : "h-2.5 w-2.5"}`} />

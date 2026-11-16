@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { AVATAR_COLOURS } from "@/lib/profile/api";
-import type { TeamPublicView } from "./game";
+import type { GameView, SecretView } from "./game";
 
 /** Room HTTP API contract, shared by client and server. */
 
@@ -75,7 +75,9 @@ export const roomBroadcast = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("room"), room: z.custom<Omit<RoomView, "role" | "mySeatId">>() }),
   z.object({ v: z.literal(1), type: z.literal("removed"), seatId: z.string() }),
   /** Full public game state after every change. */
-  z.object({ v: z.literal(1), type: z.literal("state"), game: z.custom<TeamPublicView>((x) => typeof x === "object" && x !== null) }),
+  z.object({ v: z.literal(1), type: z.literal("state"), game: z.custom<GameView>((x) => typeof x === "object" && x !== null) }),
+  /** Private: only ever sent on the player's own channel (room:CODE:p:SEAT). */
+  z.object({ v: z.literal(1), type: z.literal("secret"), secret: z.custom<SecretView>((x) => typeof x === "object" && x !== null) }),
   /** A seat answered the current question (who, never what). */
   z.object({ v: z.literal(1), type: z.literal("answered"), seatId: z.string(), index: z.number() }),
 ]);

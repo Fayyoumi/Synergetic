@@ -153,7 +153,7 @@
       }
     },
     "creating": "Setting up the room…",
-    "gamesSoonNote": "Team Trivia is ready! Charades and Who among us? arrive in the next milestones."
+    "gamesSoonNote": "Team Trivia and Charades are ready! Who among us? arrives in the next milestone."
   },
   "setup": {
     "categories": "Pick categories",
@@ -362,14 +362,15 @@
     "errors": {
       "need_two_teams": "Each team needs at least one player.",
       "no_questions": "No questions are ready for this choice.",
-      "generic": "Something went wrong. Try again."
+      "generic": "Something went wrong. Try again.",
+      "no_words": "No charades words are ready."
     }
   },
   "teams": {
-    "1": "Team Glass",
-    "2": "Team Teapot",
-    "short1": "Glass",
-    "short2": "Teapot",
+    "1": "Team Tea",
+    "2": "Team Coffee",
+    "short1": "Tea",
+    "short2": "Coffee",
     "score": "{points} points",
     "tie": "It's a tie!",
     "wins": "{team} wins!"
@@ -405,5 +406,50 @@
     "badges": "Your badges",
     "xp": "+{xp} XP",
     "listSeparator": ", "
+  },
+  "charades": {
+    "roundOf": "Round {round} of {total}",
+    "turnOf": "Turn {n} of {total}",
+    "actingNow": "{team}'s turn",
+    "actor": "{name} is acting next",
+    "acting": "{name} is acting",
+    "beginTurn": "Start the turn",
+    "yourTurn": "Your turn to act!",
+    "yourTurnBody": "Only your phone shows the word. Act it out without a single word!",
+    "ready": "Ready? Go!",
+    "waitForActor": "Waiting for {name} to start…",
+    "guess": "Guess!",
+    "guessTeam": "Your team is guessing! Shout it out.",
+    "otherTeam": "The other team is playing; if they skip a word, you can steal it.",
+    "gotIt": "Got it!",
+    "skip": "Skip ({count})",
+    "steal": "Steal",
+    "stealHint": "The other team can steal a skipped word with one guess.",
+    "secretWord": "Your word",
+    "category": "{category}",
+    "points": "{points} points",
+    "keepSecret": "Don't show anyone!",
+    "guessed": "{count} guessed",
+    "summary": "Turn summary",
+    "nextTurn": "Next turn",
+    "toFinal": "Final results",
+    "logGot": "{word} +{points}",
+    "logSkip": "Skipped a word",
+    "logSkipWord": "Skipped: {word}",
+    "logSteal": "Stolen: {word} +{points}",
+    "noWords": "No words this turn.",
+    "turnOver": "Turn over!",
+    "finalTitle": "Charades over!",
+    "yourPoints": "Your team's points: {points}",
+    "secretOnPhone": "The word is only on the actor's phone",
+    "rulesTitle": "{team}'s turn",
+    "rulesBody": "One player holds the phone and acts out the word without speaking. The team has 60 seconds to guess as many words as possible.",
+    "rulesPoints": "Easy = 100 · Medium = 200 · Hard = 300 · only 3 skips per turn · the other team can steal a skipped word for half points",
+    "noMiming": "No talking, no spelling letters with your hands",
+    "startSixty": "Start the 60 seconds",
+    "turnPoints": "{team} · {points} points this turn",
+    "difficulty1": "Easy",
+    "difficulty2": "Medium",
+    "difficulty3": "Hard"
   }
 }

@@ -30,6 +30,28 @@ export const DIFFICULTY_FILTER: Record<RoundDifficulty, readonly Difficulty[]> =
 export const ROUND_LENGTH = { classic: 5, daily: 1, sudden: 50 } as const;
 export type SoloMode = keyof typeof ROUND_LENGTH;
 
+// ---------------------------------------------------------------- charades
+
+export const CHARADES_TURN_SECONDS = 60;
+export const CHARADES_SKIPS_PER_TURN = 3;
+export const CHARADES_ROUNDS_PER_TEAM = 3;
+
+/** A guessed word: 100 / 200 / 300 by difficulty 1 / 2 / 3. */
+export function charadesPoints(difficulty: 1 | 2 | 3): number {
+  return difficulty * 100;
+}
+
+/** A stolen (skipped) word: half points for the other team. */
+export function stealPoints(difficulty: 1 | 2 | 3): number {
+  return Math.round(charadesPoints(difficulty) / 2);
+}
+
+/** Whole seconds left on a countdown of `totalSec` after `elapsedMs` (shows totalSec during the first second). */
+export function countdownFrom(totalSec: number, elapsedMs: number): number {
+  const remainingMs = totalSec * 1000 - Math.max(0, elapsedMs);
+  return Math.min(totalSec, Math.max(0, Math.ceil(remainingMs / 1000)));
+}
+
 /** Clamps to whole seconds in [0, 15]. */
 export function clampTimeLeft(timeLeft: number): number {
   if (!Number.isFinite(timeLeft)) return 0;

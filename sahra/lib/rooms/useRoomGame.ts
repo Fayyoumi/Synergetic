@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { countdownSeconds } from "@/lib/game/scoring";
-import type { TeamPublicView } from "./game";
+import { countdownFrom } from "@/lib/game/scoring";
+import type { GameView } from "./game";
 import { gameApi } from "./client";
 
 /**
@@ -10,11 +10,11 @@ import { gameApi } from "./client";
  * "state" and "answered" broadcasts. Older states (by server time) are ignored.
  */
 export function useRoomGame(code: string) {
-  const [game, setGameState] = useState<TeamPublicView | null>(null);
+  const [game, setGameState] = useState<GameView | null>(null);
   const [offset, setOffset] = useState(0);
   const latest = useRef(0);
 
-  const setGame = useCallback((g: TeamPublicView) => {
+  const setGame = useCallback((g: GameView) => {
     if (g.serverNow < latest.current) return;
     latest.current = g.serverNow;
     setOffset(g.serverNow - Date.now());
@@ -32,7 +32,7 @@ export function useRoomGame(code: string) {
 
   const onAnswered = useCallback((seatId: string, index: number) => {
     setGameState((g) => {
-      if (!g || g.phase !== "question" || g.index !== index || g.answered.includes(seatId)) return g;
+      if (!g || g.kind !== "trivia_team" || g.phase !== "question" || g.index !== index || g.answered.includes(seatId)) return g;
       return { ...g, answered: [...g.answered, seatId] };
     });
   }, []);
@@ -41,8 +41,14 @@ export function useRoomGame(code: string) {
 }
 
 /** Countdown synced to the server clock; calls onZero once per question when it hits 0. */
-export function useQuestionCountdown(startedAt: number | null, offset: number, active: boolean, onZero?: () => void) {
-  const [seconds, setSeconds] = useState(15);
+export function useQuestionCountdown(
+  startedAt: number | null,
+  offset: number,
+  active: boolean,
+  onZero?: () => void,
+  totalSec = 15,
+) {
+  const [seconds, setSeconds] = useState(totalSec);
   const fired = useRef<number | null>(null);
   const zero = useRef(onZero);
   useEffect(() => {
@@ -51,7 +57,7 @@ export function useQuestionCountdown(startedAt: number | null, offset: number, a
   useEffect(() => {
     if (!active || startedAt === null) return;
     const tick = () => {
-      const s = countdownSeconds(Date.now() + offset - startedAt);
+      const s = countdownFrom(totalSec, Date.now() + offset - startedAt);
       setSeconds(s);
       if (s === 0 && fired.current !== startedAt) {
         fired.current = startedAt;
@@ -61,6 +67,6 @@ export function useQuestionCountdown(startedAt: number | null, offset: number, a
     tick();
     const id = setInterval(tick, 250);
     return () => clearInterval(id);
-  }, [startedAt, offset, active]);
+  }, [startedAt, offset, active, totalSec]);
   return seconds;
 }

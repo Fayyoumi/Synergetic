@@ -58,8 +58,8 @@ test("1 host + 3 phones play a full team-trivia game", async ({ page: host, brow
   await host.getByTestId("host-start").click();
   await expect(host.getByTestId("host-question")).toBeVisible();
   // Teams were balanced in join order: ليلى + سارة on team 1, كريم on team 2.
-  await expect(layla.page.getByText("فريقك: فريق الكاسة")).toBeVisible();
-  await expect(karim.page.getByText("فريقك: فريق الإبريق")).toBeVisible();
+  await expect(layla.page.getByText("فريقك: فريق الشاي")).toBeVisible();
+  await expect(karim.page.getByText("فريقك: فريق القهوة")).toBeVisible();
 
   let karimPage = karim.page;
   for (let i = 0; i < 5; i++) {
@@ -96,7 +96,7 @@ test("1 host + 3 phones play a full team-trivia game", async ({ page: host, brow
     await host.getByTestId("host-advance").click(); // → next question / final
   }
 
-  await expect(host.getByTestId("winner")).toContainText("فريق الكاسة ربح!");
+  await expect(host.getByTestId("winner")).toContainText("فريق الشاي ربح!");
   const team1 = western((await host.getByTestId("team-1-score").first().textContent())!);
   const team2 = western((await host.getByTestId("team-2-score").first().textContent())!);
   expect(team1).toBeGreaterThan(team2);

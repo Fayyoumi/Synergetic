@@ -12,6 +12,7 @@ import { useRoomChannel } from "@/lib/realtime/useRoomChannel";
 import { ROOM_GAMES, type RoomErrorCode, type RoomGame, type RoomMood, type RoomView } from "@/lib/rooms/api";
 import { MoodPicker } from "./MoodPicker";
 import { HostTrivia } from "@/components/trivia/HostTrivia";
+import { HostCharades } from "@/components/charades/HostCharades";
 import type { GameErrorCode } from "@/lib/rooms/game";
 import { gameApi } from "@/lib/rooms/client";
 import { useRoomGame } from "@/lib/rooms/useRoomGame";
@@ -150,24 +151,38 @@ export function HostLobby({ code }: { code: string }) {
         <div className="px-10">
           <SelfConnBanner state={channelState} />
         </div>
-        <HostTrivia
-          game={game}
-          seats={room.seats}
-          tracker={tracker}
-          offset={offset}
-          busy={busy}
-          onAdvance={() => void command({ action: "advance" })}
-          onTimeUp={() => void command({ action: "timeup", index: game.index })}
-          onLobby={() => void command({ action: "lobby" })}
-          onEnd={() => void act({ action: "end" })}
-        />
+        {game.kind === "charades" ? (
+          <HostCharades
+            game={game}
+            seats={room.seats}
+            tracker={tracker}
+            offset={offset}
+            busy={busy}
+            onCommand={(action) => void command({ action })}
+            onTimeUp={() => void command({ action: "timeup", index: game.turn })}
+            onEnd={() => void act({ action: "end" })}
+          />
+        ) : (
+          <HostTrivia
+            game={game}
+            seats={room.seats}
+            tracker={tracker}
+            offset={offset}
+            busy={busy}
+            onAdvance={() => void command({ action: "advance" })}
+            onTimeUp={() => void command({ action: "timeup", index: game.index })}
+            onLobby={() => void command({ action: "lobby" })}
+            onEnd={() => void act({ action: "end" })}
+          />
+        )}
       </div>
     );
   }
 
   const playerCount = formatNumber(room.seats.length, locale);
   const displayCode = roomCode(room.code);
-  const canStart = room.game === "trivia_team" && room.seats.length >= 2;
+  const teamGame = room.game === "trivia_team" || room.game === "charades";
+  const canStart = teamGame && room.seats.length >= 2;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -219,7 +234,7 @@ export function HostLobby({ code }: { code: string }) {
                 large
                 onRemove={(s) => void act({ action: "remove", seatId: s.id })}
                 renderExtra={
-                  room.game === "trivia_team"
+                  teamGame
                     ? (s) => (
                         <button
                           type="button"
@@ -269,10 +284,10 @@ export function HostLobby({ code }: { code: string }) {
             <MoodPicker mood={room.mood} onChange={onMood} error={moodError} />
           </div>
 
-          {room.game === "trivia_team" && (
+          {teamGame && (
             <div className="flex flex-wrap items-center gap-3">
               <span className="display-text text-2xl">{t("settings")}</span>
-              {([5, 10, 15] as const).map((n) => (
+              {room.game === "trivia_team" && ([5, 10, 15] as const).map((n) => (
                 <button
                   key={n}
                   type="button"
@@ -283,7 +298,7 @@ export function HostLobby({ code }: { code: string }) {
                   {t("count", { count: formatNumber(n, locale) })}
                 </button>
               ))}
-              {(["easy", "mixed", "hard"] as const).map((d) => (
+              {room.game === "trivia_team" && (["easy", "mixed", "hard"] as const).map((d) => (
                 <button
                   key={d}
                   type="button"
@@ -308,7 +323,7 @@ export function HostLobby({ code }: { code: string }) {
           )}
           {gameError && (
             <p role="alert" className="text-xl font-bold text-tomato">
-              {t(`errors.${gameError === "need_two_teams" || gameError === "no_questions" ? gameError : "generic"}`)}
+              {t(`errors.${gameError === "need_two_teams" || gameError === "no_questions" || gameError === "no_words" ? gameError : "generic"}`)}
             </p>
           )}
 
@@ -338,8 +353,8 @@ export function HostLobby({ code }: { code: string }) {
               </Button>
             )}
           </div>
-          {room.game !== "trivia_team" && <p className="text-lg text-muted">{t("startSoon")}</p>}
-          {room.game === "trivia_team" && room.seats.length < 2 && <p className="text-lg text-muted">{t("needPlayers")}</p>}
+          {!teamGame && <p className="text-lg text-muted">{t("startSoon")}</p>}
+          {teamGame && room.seats.length < 2 && <p className="text-lg text-muted">{t("needPlayers")}</p>}
         </section>
       </div>
     </div>

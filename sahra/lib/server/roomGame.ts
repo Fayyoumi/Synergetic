@@ -13,18 +13,19 @@ import {
   type TeamAction,
   type TeamTriviaState,
 } from "@/lib/game/teamTrivia";
-import { roomTopic, type RoomBroadcast } from "@/lib/rooms/api";
-import type { GameCommand, GameErrorCode, TeamPublicView } from "@/lib/rooms/game";
+import { roomTopic, seatTopic, type RoomBroadcast } from "@/lib/rooms/api";
+import type { GameCommand, GameErrorCode, GameView, SecretView, TeamPublicView } from "@/lib/rooms/game";
 import { CATEGORIES } from "@/lib/content/schemas";
 import { logEvent } from "./events";
+import { CharadesGame } from "./charadesGame";
 
-type RoomRow = {
+export type RoomRow = {
   id: string;
   code: string;
   host_profile_id: string | null;
   status: "lobby" | "playing" | "ended";
   game: string | null;
-  game_state: Partial<TeamTriviaState> | null;
+  game_state: { kind?: string; phase?: string } | null;
   state_version: number;
 };
 
@@ -38,14 +39,14 @@ type QuestionRow = {
   answer_index: number;
 };
 
-export type GameOutcome = { ok: true; game: TeamPublicView } | { ok: false; error: GameErrorCode };
+export type GameOutcome = { ok: true; game: GameView } | { ok: false; error: GameErrorCode };
 
 const fail = (error: GameErrorCode): GameOutcome => ({ ok: false, error });
 const rng = () => seededRng(randomInt(0, 2 ** 31));
 
-function stateOf(room: RoomRow): TeamTriviaState {
+export function stateOf(room: RoomRow): TeamTriviaState {
   const s = room.game_state;
-  return s && s.kind === "trivia_team" ? (s as TeamTriviaState) : createTeamState();
+  return s && s.kind === "trivia_team" ? (s as unknown as TeamTriviaState) : createTeamState();
 }
 
 /** Server side of room games (team trivia). Host drives the flow; the server checks and scores. */
@@ -53,8 +54,8 @@ export class RoomGameService {
   private readonly receivedAt: number;
 
   constructor(
-    private db: SupabaseClient,
-    private userId: string,
+    readonly db: SupabaseClient,
+    readonly userId: string,
     receivedAt?: number,
   ) {
     this.receivedAt = receivedAt ?? Date.now();
@@ -67,6 +68,7 @@ export class RoomGameService {
     if (!room) return fail("not_found");
     const member = await this.memberRole(room);
     if (!member) return fail("not_member");
+    if (room.game === "charades") return { ok: true, game: await new CharadesGame(this).view(room) };
     return { ok: true, game: await this.view(room, stateOf(room)) };
   }
 
@@ -78,24 +80,28 @@ export class RoomGameService {
     if (room.status === "ended") return fail("ended");
     const role = await this.memberRole(room);
     if (!role) return fail("not_member");
+
+    // Team setup is the same for every team game.
+    if (cmd.action === "team" || cmd.action === "balance") {
+      if (role !== "host") return fail("not_host");
+      const phase = room.game_state?.phase ?? "lobby";
+      if (phase !== "lobby" && phase !== "final") return fail("wrong_phase");
+      if (cmd.action === "team") {
+        await this.db.from("room_players").update({ team: cmd.team }).eq("id", cmd.seatId).eq("room_id", room.id);
+      } else {
+        const seats = await this.seats(room.id);
+        const teams = balanceTeams(seats.map((s) => s.id), {});
+        for (const [id, team] of Object.entries(teams)) await this.db.from("room_players").update({ team }).eq("id", id);
+      }
+      return this.get(code);
+    }
+    if (room.game === "charades") return new CharadesGame(this).command(room, role, cmd);
+
     if (cmd.action === "timeup") return this.reveal(room, cmd.index, true);
     if (role !== "host") return fail("not_host");
 
     const state = stateOf(room);
     switch (cmd.action) {
-      case "team":
-      case "balance": {
-        if (state.phase !== "lobby" && state.phase !== "final") return fail("wrong_phase");
-        if (cmd.action === "team") {
-          await this.db.from("room_players").update({ team: cmd.team }).eq("id", cmd.seatId).eq("room_id", room.id);
-        } else {
-          const seats = await this.seats(room.id);
-          const teams = balanceTeams(seats.map((s) => s.id), {});
-          for (const [id, team] of Object.entries(teams)) await this.db.from("room_players").update({ team }).eq("id", id);
-        }
-        return { ok: true, game: await this.view(room, state) };
-      }
-
       case "start": {
         const seats = await this.seats(room.id);
         if (seats.length < 2) return fail("need_two_teams");
@@ -169,6 +175,8 @@ export class RoomGameService {
         void logEvent("play_again_clicked", { type: "trivia_team" }, { profileId: this.userId, roomId: room.id });
         return this.publish(room, result.state);
       }
+      default:
+        return fail("bad_request");
     }
   }
 
@@ -298,6 +306,7 @@ export class RoomGameService {
   async removeFromGame(roomId: string, seatId: string) {
     const { data } = await this.db.from("rooms").select("id, code, host_profile_id, status, game, game_state, state_version").eq("id", roomId).single<RoomRow>();
     if (!data) return;
+    if (data.game === "charades") return new CharadesGame(this).remove(data, seatId);
     const state = stateOf(data);
     if (!state.players[seatId]) return;
     const result = this.reduce(state, { type: "remove", seatId });
@@ -310,7 +319,7 @@ export class RoomGameService {
     return teamTriviaReducer(state, action);
   }
 
-  private async load(code: string): Promise<RoomRow | null> {
+  async load(code: string): Promise<RoomRow | null> {
     const { data } = await this.db
       .from("rooms")
       .select("id, code, host_profile_id, status, game, game_state, state_version")
@@ -322,7 +331,7 @@ export class RoomGameService {
     return data;
   }
 
-  private async memberRole(room: RoomRow): Promise<"host" | "player" | null> {
+  async memberRole(room: RoomRow): Promise<"host" | "player" | null> {
     if (room.host_profile_id === this.userId) return "host";
     const { count } = await this.db
       .from("room_players")
@@ -333,7 +342,7 @@ export class RoomGameService {
     return (count ?? 0) > 0 ? "player" : null;
   }
 
-  private async seats(roomId: string): Promise<{ id: string; team: Team | null }[]> {
+  async seats(roomId: string): Promise<{ id: string; team: Team | null }[]> {
     const { data } = await this.db.from("room_players").select("id, team").eq("room_id", roomId).is("removed_at", null).order("joined_at");
     return (data ?? []) as { id: string; team: Team | null }[];
   }
@@ -347,7 +356,7 @@ export class RoomGameService {
     return Object.fromEntries((data ?? []).map((r) => [r.room_player_id as string, { choice: r.choice_index as number, timeLeft: r.time_left as number }]));
   }
 
-  private async commit(room: RoomRow, state: TeamTriviaState, status?: "lobby" | "playing"): Promise<boolean> {
+  async commit(room: RoomRow, state: object, status?: "lobby" | "playing"): Promise<boolean> {
     const { data, error } = await this.db.rpc("room_commit", {
       p_room: room.id,
       p_version: room.state_version,
@@ -358,13 +367,25 @@ export class RoomGameService {
     return data === true;
   }
 
-  private async publish(room: RoomRow, state: TeamTriviaState): Promise<GameOutcome> {
+  async publish(room: RoomRow, state: TeamTriviaState): Promise<GameOutcome> {
     const game = await this.view(room, state);
     await this.send(room.code, { v: 1, type: "state", game });
     return { ok: true, game };
   }
 
-  private async send(code: string, message: RoomBroadcast) {
+  /** Sends a private message on one player's own channel. */
+  async sendSecret(code: string, seatId: string, secret: SecretView) {
+    const channel = this.db.channel(seatTopic(code, seatId), { config: { private: true } });
+    try {
+      await channel.httpSend("secret", { v: 1, type: "secret", secret } satisfies RoomBroadcast);
+    } catch (e) {
+      console.error("secret broadcast failed", e);
+    } finally {
+      await this.db.removeChannel(channel);
+    }
+  }
+
+  async send(code: string, message: RoomBroadcast) {
     const channel = this.db.channel(roomTopic(code), { config: { private: true } });
     try {
       await channel.httpSend(message.type, message);

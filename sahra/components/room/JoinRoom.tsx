@@ -14,6 +14,8 @@ import type { RoomErrorCode, RoomView } from "@/lib/rooms/api";
 import { hasConsented, rememberConsent, roomsApi } from "@/lib/rooms/client";
 import { ConnBadge, ConnToasts, PlayerList, SelfConnBanner } from "./Presence";
 import { PhoneTrivia } from "@/components/trivia/PhoneTrivia";
+import { PhoneCharades } from "@/components/charades/PhoneCharades";
+import type { SecretView } from "@/lib/rooms/game";
 import { gameApi } from "@/lib/rooms/client";
 import { useRoomGame } from "@/lib/rooms/useRoomGame";
 
@@ -196,6 +198,16 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
     [initial.mySeatId],
   );
   const { game, setGame, onAnswered, offset, refresh } = useRoomGame(initial.code);
+  const [secret, setSecret] = useState<SecretView | null>(null);
+  const [busy, setBusy] = useState(false);
+  const fetchSecret = async () => {
+    try {
+      const r = await (await fetch(`/api/rooms/${initial.code}/secret`, { cache: "no-store" })).json();
+      if (r.ok && r.secret) setSecret(r.secret);
+    } catch {
+      // the broadcast will deliver it
+    }
+  };
   // Catch up on anything missed while not subscribed (including being removed).
   const resync = async () => {
     const r = await roomsApi.get(initial.code);
@@ -206,6 +218,7 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
       setRoom((prev) => ({ ...prev, status: "ended" }));
     }
     await refresh();
+    await fetchSecret();
   };
   const { tracker, channelState } = useRoomChannel({
     code: room.code,
@@ -217,6 +230,7 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
     onState: setGame,
     onAnswered,
     onSubscribed: () => void resync(),
+    onSecret: setSecret,
   });
 
   if (removed || room.status === "ended") {
@@ -244,6 +258,25 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
           {tconn("host")}
           <ConnBadge status={hostStatus} />
         </span>
+        {game.kind === "charades" ? (
+          <PhoneCharades
+            game={game}
+            mySeatId={initial.mySeatId}
+            seats={room.seats}
+            secret={secret}
+            offset={offset}
+            busy={busy}
+            onCommand={async (action) => {
+              setBusy(true);
+              const r = await gameApi.command(room.code, { action });
+              setBusy(false);
+              if (r.ok) setGame(r.game);
+              // The word may have arrived before the state; fetch it if missing.
+              if (action === "begin" || action === "got_it" || action === "skip") void fetchSecret();
+            }}
+            onTimeUp={() => void gameApi.command(room.code, { action: "timeup", index: game.turn }).then((r) => r.ok && setGame(r.game))}
+          />
+        ) : (
         <PhoneTrivia
           game={game}
           mySeatId={initial.mySeatId}
@@ -255,6 +288,7 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
           }}
           onTimeUp={() => void gameApi.command(room.code, { action: "timeup", index: game.index }).then((r) => r.ok && setGame(r.game))}
         />
+        )}
       </div>
     );
   }

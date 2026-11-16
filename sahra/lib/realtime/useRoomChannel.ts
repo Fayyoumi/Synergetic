@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
-import { roomBroadcast, roomTopic, type PresencePayload, type RoomView } from "@/lib/rooms/api";
-import type { TeamPublicView } from "@/lib/rooms/game";
+import { roomBroadcast, roomTopic, seatTopic, type PresencePayload, type RoomView } from "@/lib/rooms/api";
+import type { GameView, SecretView } from "@/lib/rooms/game";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import { createTracker, HOST_KEY, observe, statusOf, type ConnStatus, type PresenceTracker } from "./presence";
 
@@ -18,7 +18,9 @@ type Options = {
   seatIds: readonly string[];
   onRoom?: (room: Omit<RoomView, "role" | "mySeatId">) => void;
   onRemoved?: (seatId: string) => void;
-  onState?: (game: TeamPublicView) => void;
+  onState?: (game: GameView) => void;
+  /** Private messages on this player's own channel (e.g. the charades word). */
+  onSecret?: (secret: SecretView) => void;
   onAnswered?: (seatId: string, index: number) => void;
   /**
    * Called every time the channel (re)connects. Messages sent while this
@@ -37,15 +39,38 @@ function visibility(): PresencePayload["status"] {
  * Joins the room's private channel, publishes this client's presence
  * (active / away) and tracks everyone else's. Reconnects on its own.
  */
-export function useRoomChannel({ code, role, seatId, seatIds, onRoom, onRemoved, onState, onAnswered, onSubscribed }: Options) {
+export function useRoomChannel({ code, role, seatId, seatIds, onRoom, onRemoved, onState, onAnswered, onSubscribed, onSecret }: Options) {
   const [snapshot, setSnapshot] = useState<Record<string, ConnStatus>>({});
   const [synced, setSynced] = useState(0);
   const [channelState, setChannelState] = useState<ChannelState>("connecting");
   const [attempt, setAttempt] = useState(0);
-  const handlers = useRef({ onRoom, onRemoved, onState, onAnswered, onSubscribed });
+  const handlers = useRef({ onRoom, onRemoved, onState, onAnswered, onSubscribed, onSecret });
   useEffect(() => {
-    handlers.current = { onRoom, onRemoved, onState, onAnswered, onSubscribed };
+    handlers.current = { onRoom, onRemoved, onState, onAnswered, onSubscribed, onSecret };
   });
+
+  // Players also listen on their private channel. Only this player can join it (RLS).
+  useEffect(() => {
+    const supabase = getBrowserSupabase();
+    if (!supabase || role !== "player" || !seatId) return;
+    let channel: RealtimeChannel | null = null;
+    let disposed = false;
+    void (async () => {
+      await supabase.realtime.setAuth();
+      if (disposed) return;
+      channel = supabase
+        .channel(seatTopic(code, seatId), { config: { private: true } })
+        .on("broadcast", { event: "secret" }, ({ payload: msg }) => {
+          const parsed = roomBroadcast.safeParse(msg);
+          if (parsed.success && parsed.data.type === "secret") handlers.current.onSecret?.(parsed.data.secret);
+        })
+        .subscribe();
+    })();
+    return () => {
+      disposed = true;
+      if (channel) void supabase.removeChannel(channel);
+    };
+  }, [code, role, seatId, attempt]);
 
   const presenceKey = role === "host" ? HOST_KEY : seatId;
 

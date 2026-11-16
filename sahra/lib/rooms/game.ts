@@ -34,6 +34,41 @@ export type TeamPublicView = {
   serverNow: number;
 };
 
+/** Public charades state. Never contains the word being acted; skipped words stay hidden until the turn ends. */
+export type CharadesPublicView = {
+  v: 1;
+  kind: "charades";
+  phase: "lobby" | "turn_ready" | "turn_active" | "turn_summary" | "final";
+  turn: number;
+  totalTurns: number;
+  round: number;
+  roundsPerTeam: number;
+  actingTeam: Team;
+  actorSeatId: string | null;
+  startedAt: number;
+  turnSeconds: number;
+  skipsLeft: number;
+  canSteal: boolean;
+  /** This turn's events. `word` is null for a skip until it's stolen or the turn ends. */
+  log: { kind: "got" | "skip" | "steal"; word: string | null; points: number; team: Team | null }[];
+  teams: Record<string, Team>;
+  teamScores: Record<Team, number>;
+  final: { winner: Team | null; players: { seatId: string; team: Team; points: number; xp: number }[] } | null;
+  serverNow: number;
+};
+
+export type GameView = TeamPublicView | CharadesPublicView;
+
+/** Private message for one player only (sent on their own channel). */
+export type SecretView = {
+  kind: "charades_word";
+  turn: number;
+  word: string;
+  category: string;
+  difficulty: 1 | 2 | 3;
+  points: number;
+};
+
 export const gameCommand = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("start"),
@@ -47,6 +82,11 @@ export const gameCommand = z.discriminatedUnion("action", [
   z.object({ action: z.literal("balance") }),
   /** Any member may ask for the reveal once the time is up (keeps the game moving if the host screen drops). */
   z.object({ action: z.literal("timeup"), index: z.number().int().min(0).max(49) }),
+  // Charades: the host or the current actor.
+  z.object({ action: z.literal("begin") }),
+  z.object({ action: z.literal("got_it") }),
+  z.object({ action: z.literal("skip") }),
+  z.object({ action: z.literal("steal") }),
 ]);
 export type GameCommand = z.input<typeof gameCommand>;
 
@@ -73,6 +113,10 @@ export type GameErrorCode =
   | "already_answered"
   | "time_up"
   | "conflict"
+  | "not_actor"
+  | "no_skips"
+  | "nothing_to_steal"
+  | "no_words"
   | "server_error";
 
-export type GameResponse = { ok: true; game: TeamPublicView } | { ok: false; error: GameErrorCode };
+export type GameResponse = { ok: true; game: GameView } | { ok: false; error: GameErrorCode };
