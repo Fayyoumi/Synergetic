@@ -4,6 +4,8 @@ import { BackHeader } from "@/components/BackHeader";
 import { BottomNav } from "@/components/BottomNav";
 import { PhoneShell } from "@/components/PhoneShell";
 import { GameCard } from "@/components/play/GameCard";
+import { GroupGameCards } from "@/components/play/GroupGameCards";
+import { JoinCodeForm } from "@/components/room/JoinCodeForm";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/play/group">): Promise<Metadata> {
   const { locale } = await params;
@@ -11,24 +13,22 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/play/gro
   return { title: t("groupGames") };
 }
 
-/**
- * Play hub, step 2 (group). Rooms arrive in Milestone 3; until then the group
- * games are listed but not startable.
- */
+/** Play hub, step 2 (group): picking a game creates a room and opens the host screen. */
 export default async function GroupGamesPage({ params }: PageProps<"/[locale]/play/group">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("play");
-  const c = await getTranslations("common");
   return (
     <>
       <PhoneShell lights={false}>
         <BackHeader title={t("groupGames")} href="/play" />
-        <p className="rounded-[16px] ink-border bg-paper px-4 py-3 font-semibold">{t("groupSoon")}</p>
-        <GameCard disabled tone="sunflower" name={t("games.teamTrivia.name")} meta={t("games.teamTrivia.meta")} tag={c("soon")} />
+        <p className="text-muted">{t("groupSoon")}</p>
+        <GroupGameCards />
         <GameCard disabled tone="ink" name={t("games.mafia.name")} meta={t("games.mafia.meta")} tag={t("games.mafia.tag")} />
-        <GameCard disabled tone="tomato" name={t("games.charades.name")} meta={t("games.charades.meta")} tag={c("soon")} />
-        <GameCard disabled tone="chair" name={t("games.whoAmongUs.name")} meta={t("games.whoAmongUs.meta")} tag={c("soon")} />
+        <p className="text-sm text-muted">{t("gamesSoonNote")}</p>
+        <div className="mt-2 rounded-[20px] ink-border bg-paper p-4">
+          <JoinCodeForm compact />
+        </div>
       </PhoneShell>
       <BottomNav />
     </>

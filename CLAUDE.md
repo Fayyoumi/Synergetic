@@ -95,6 +95,15 @@ design-reference/        PNG screenshots of every screen
 
 ## Real-time rooms
 
+**Built in Milestone 3:**
+- **API.** `POST /api/rooms` creates a room (host = caller). `GET /api/rooms/[code]` returns room info; seats are listed only to the host and seated players. `POST /api/rooms/[code]/join` takes a seat: it needs consent, rejoins by account (or device id + name), refuses removed players, allows at most 12, and lets under-18s join only Family nights. `POST /api/rooms/[code]/host` handles mood (roast needs `roastConfirmed`), game, remove and end. The logic is in `lib/server/rooms.ts`.
+- **Channels are private** (Realtime Authorization). The `realtime.messages` policies use `public.can_use_room_topic(topic)`:
+  - `room:CODE` is open to the host and seated players;
+  - `room:CODE:p:SEAT_ID` is open to that seat's owner only (not even the host), for charades words and Mafia roles.
+- **Clients may only publish presence.** Every broadcast is sent by the server (`httpSend` with the service role), so players can't forge game or host messages.
+- **Fair play: disconnections are public.** Each client tracks presence `{ role, seatId, status: "active" | "away" }`, where "away" means the page is hidden (app switch or screen lock). It untracks on `pagehide`. Everyone runs the same pure tracker (`lib/realtime/presence.ts`): statuses are active / away / offline, with notices ("X left the app", "X disconnected", "X is back") and per-seat away counts. The host also shows as `host`. UI: `components/room/Presence.tsx` (`ConnBadge`, `PlayerList`, `ConnToasts`, `SelfConnBanner`). Hook: `lib/realtime/useRoomChannel.ts`. Keep this visible in every game screen (host and phones).
+
+**Spec rules (Milestones 4–6 build on these):**
 - One Supabase Realtime channel per room, `room:{code}`. Presence holds the player list and broadcast carries game messages. Codes are 4 random digits, unique among non-ended rooms (partial unique index). Rooms expire after 6 hours of inactivity.
 - **The host screen is the authority.** It runs the reducer state machine and broadcasts the full public state after every change. Phones send intents only (`answer`, `vote`, `skip`, `got_it`, `steal`, `ready`), and the host ignores invalid or late ones.
 - Private data (the charades word, future Mafia roles) goes only to that player and never into public state.

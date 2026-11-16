@@ -4,6 +4,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { PhoneShell } from "@/components/PhoneShell";
 import { ButtonLink, Card, SpeechBubble } from "@/components/ui";
 import { BottomNav } from "@/components/BottomNav";
+import { JoinCodeForm } from "@/components/room/JoinCodeForm";
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -25,6 +26,10 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       </section>
 
       {/* The next-gathering card appears here once rooms and groups exist (Milestone 3). */}
+
+      <Card>
+        <JoinCodeForm compact />
+      </Card>
 
       <section aria-labelledby="groups-title" className="flex flex-col gap-3">
         <h2 id="groups-title" className="display-text text-2xl">
