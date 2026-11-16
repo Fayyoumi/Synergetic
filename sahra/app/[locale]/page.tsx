@@ -3,6 +3,7 @@ import { Kassa } from "@/components/Kassa";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { PhoneShell } from "@/components/PhoneShell";
 import { ButtonLink, Card, SpeechBubble } from "@/components/ui";
+import { BottomNav } from "@/components/BottomNav";
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
@@ -11,6 +12,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const c = await getTranslations("common");
 
   return (
+    <>
     <PhoneShell>
       <header className="flex items-center justify-between pt-1">
         <h1 className="display-text text-5xl text-tomato">{c("appName")}</h1>
@@ -39,5 +41,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         </ButtonLink>
       </div>
     </PhoneShell>
+    <BottomNav />
+    </>
   );
 }

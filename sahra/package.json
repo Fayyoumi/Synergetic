@@ -15,7 +15,10 @@
     "content:sql": "tsx scripts/content-import.ts --sql",
     "content:import": "tsx --env-file-if-exists=.env.local scripts/content-import.ts",
     "db:test": "bash scripts/db-test.sh",
-    "ci": "npm run lint && npm run typecheck && npm run content:check && npm run test && npm run build"
+    "ci": "npm run lint && npm run typecheck && npm run content:check && npm run test && npm run build",
+    "db:start": "supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,storage-api,postgres-meta,mailpit && bash scripts/local-env.sh",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

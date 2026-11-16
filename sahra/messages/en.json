@@ -9,7 +9,13 @@
     "kassa": "Kassa",
     "soon": "Coming soon",
     "back": "Back",
-    "home": "Home"
+    "home": "Home",
+    "close": "Close",
+    "retry": "Try again",
+    "loading": "One moment…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "points": "{points} points"
   },
   "lang": {
     "label": "Language",
@@ -60,5 +66,199 @@
     "sessionLoading": "Signing in as a guest…",
     "sessionGuest": "Anonymous guest: {id}",
     "sessionError": "Sign-in failed: {message}"
+  },
+  "nav": {
+    "label": "Main navigation",
+    "home": "Home",
+    "play": "Play",
+    "profile": "Profile"
+  },
+  "categories": {
+    "geo": "Geography",
+    "sport": "Sport",
+    "food": "Food",
+    "hist": "History",
+    "sci": "Science",
+    "tv": "TV & film",
+    "lang": "Arabic language",
+    "flags": "Flags",
+    "logos": "Logos",
+    "music": "Arabic songs",
+    "riddles": "Riddles",
+    "maps": "Maps"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "legend": "Legend",
+    "chip": "{label} · {points}"
+  },
+  "play": {
+    "title": "What do you want to play?",
+    "subtitle": "How are you playing tonight?",
+    "solo": "Solo",
+    "soloBody": "Trivia Night, the daily challenge and sudden death. Challenge yourself and collect XP.",
+    "group": "Group",
+    "groupBody": "Team trivia, charades and games about your people. One screen, everyone on their phone.",
+    "streak": "{days} days in a row. Play today to keep your streak!",
+    "streakToday": "{days} days in a row. You played today, nice!",
+    "streakNone": "Play today to start a new streak!",
+    "soloGames": "Solo games",
+    "groupGames": "Group games",
+    "groupSoon": "Group play arrives in the next update.",
+    "games": {
+      "trivia": {
+        "name": "Trivia Night",
+        "meta": "5 questions · pick categories and difficulty",
+        "tag": "Solo"
+      },
+      "daily": {
+        "name": "Daily challenge",
+        "meta": "One question, the same for everyone",
+        "tag": "Daily"
+      },
+      "dailyDone": "Played today · come back tomorrow",
+      "sudden": {
+        "name": "Sudden death",
+        "meta": "Answer until you're wrong. One mistake and you're out",
+        "tag": "Challenge"
+      },
+      "nameAll": {
+        "name": "Name them all",
+        "meta": "Timed lists",
+        "tag": "Coming soon"
+      },
+      "teamTrivia": {
+        "name": "Team Trivia",
+        "meta": "Two teams or more, scores on the big screen",
+        "tag": "Teams"
+      },
+      "mafia": {
+        "name": "Mafia",
+        "meta": "5–12 players · local roles and a narrator",
+        "tag": "Coming soon"
+      },
+      "charades": {
+        "name": "Charades",
+        "meta": "Silent acting in Arabic · two teams",
+        "tag": "Action"
+      },
+      "whoAmongUs": {
+        "name": "Who among us?",
+        "meta": "Games about your people, from their secret answers",
+        "tag": "Laughs"
+      }
+    }
+  },
+  "setup": {
+    "categories": "Pick categories",
+    "selectedCount": "({count} selected)",
+    "pickOne": "Pick at least one category",
+    "difficulty": "Difficulty",
+    "diffEasy": "Easy",
+    "diffMixed": "Mixed",
+    "diffHard": "Hard",
+    "range": "{min}–{max} per question",
+    "questionCount": "Questions",
+    "maxScore": "Highest possible score",
+    "untilWrong": "Until your first mistake",
+    "rule": "Points = difficulty points + speed bonus (up to 50%) + streak bonus (up to 50%). One ×2 joker.",
+    "suddenRule": "Questions start easy and get harder. One mistake or timeout and you're out.",
+    "filledNotice": "Not enough questions in your categories, so we added some from other categories.",
+    "otherLangNotice": "Some questions are in Arabic because there aren't enough English ones yet.",
+    "repeatNotice": "You've seen some of these in the last 30 days; there aren't others yet.",
+    "start": "Let's go!",
+    "dailyIntro": "One question, the same for everyone today. You get one try.",
+    "noQuestions": "No questions are ready for this choice. Try other categories."
+  },
+  "question": {
+    "progress": "{n} / {total}",
+    "progressOpen": "Question {n}",
+    "progressLabel": "Question {n} of {total}",
+    "timer": "{seconds} seconds",
+    "streakChip": "Streak {count}",
+    "fifty": "50:50 joker",
+    "double": "×2 joker",
+    "doubleOn": "×2 on",
+    "jokerUsed": "Used",
+    "report": "Report this question",
+    "reportConfirm": "Something wrong with this question? We'll hide it from you and review it.",
+    "reportSend": "Report",
+    "reported": "Thanks! It's hidden for you and Kassa will review it.",
+    "correctLabel": "Correct",
+    "yourAnswer": "Your answer",
+    "gained": "+{points} points",
+    "breakdown": "difficulty {base} + speed {speed} + streak {streak}",
+    "doubled": "doubled ×2",
+    "wrong": "Wrong!",
+    "timeout": "Time's up!",
+    "correctWas": "The answer was: {answer}. Your streak is back to zero.",
+    "next": "Next question",
+    "results": "See results",
+    "score": "Score: {score}",
+    "letters": "A,B,C,D",
+    "otherLang": "This question is in Arabic",
+    "networkError": "Connection problem. Try again.",
+    "reportCancel": "Never mind"
+  },
+  "results": {
+    "title": "Round over!",
+    "yourScore": "Your score",
+    "correctOf": "{correct} of {total} correct",
+    "correctOpen": "{correct} correct",
+    "correct": "Correct",
+    "bestStreak": "Best streak",
+    "xp": "XP",
+    "xpValue": "+{xp}",
+    "badgesTitle": "Badges this round",
+    "dayStreak": "Day streak: {days}",
+    "again": "Play again",
+    "share": "Share result",
+    "shareText": "I scored {score} on Sahra! Can you beat me?",
+    "shared": "Copy the link and share it",
+    "copied": "Copied!",
+    "dailyDone": "Today's challenge is done. Come back tomorrow for a new one!",
+    "backToGames": "Other games"
+  },
+  "badges": {
+    "perfect_round": "Perfect round",
+    "streak_3": "Hot streak 3",
+    "streak_5": "Hot streak 5",
+    "streak_10": "Hot streak 10",
+    "golden_mind": "Golden mind",
+    "first_round": "First round"
+  },
+  "profile": {
+    "title": "Profile",
+    "guest": "Guest",
+    "guestNote": "You're playing as a guest. Your points are saved on this device.",
+    "name": "Name",
+    "namePlaceholder": "What's your name?",
+    "nameMasked": "We hid a word that isn't nice from your name.",
+    "avatar": "Avatar colour",
+    "avatarOption": "Colour {n}",
+    "birthYear": "Birth year",
+    "birthYearHelp": "We ask to protect kids: under-18s play in Family mood only.",
+    "birthYearPlaceholder": "e.g. 1995",
+    "minorNote": "Family mood only, and no public leagues.",
+    "saved": "Saved!",
+    "saveError": "Couldn't save.",
+    "xp": "XP",
+    "dayStreak": "Day streak",
+    "longestStreak": "Longest: {days}",
+    "gamesPlayed": "Games",
+    "badges": "Badges",
+    "noBadges": "No badges yet. Play a round!",
+    "language": "Language",
+    "deleteTitle": "Delete my data",
+    "deleteBody": "We'll delete your account, points, answers and secrets. This can't be undone.",
+    "deleteConfirm": "Yes, delete everything",
+    "deleted": "Your data has been deleted.",
+    "unavailable": "Your profile isn't available right now. Try again soon."
+  },
+  "errors": {
+    "unconfigured": "The game isn't connected to its database yet.",
+    "generic": "Something went wrong. Try again."
   }
 }

@@ -36,8 +36,18 @@ jobs:
       - run: npm run content:check
       - name: Unit + database tests
         run: npm test
+
+      # End-to-end tests run against a local Supabase stack (Docker) with the
+      # migrations and seed applied, exactly like `npx supabase start` locally.
+      - name: Start local Supabase
+        run: npx supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,storage-api,postgres-meta,mailpit
+      - name: Point the app at it
+        run: ./scripts/local-env.sh
       - run: npm run build
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
       - name: End-to-end tests
         run: npm run test:e2e
+      - name: Stop Supabase
+        if: always()
+        run: npx supabase stop --no-backup

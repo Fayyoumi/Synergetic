@@ -3,26 +3,30 @@
 Arabic-first party games for Arab gatherings, hosted by Kassa the tea glass.
 Next.js 16 + Supabase. Read `../CLAUDE.md` for conventions and `docs/SAHRA_SPEC.md` for the full spec.
 
-> Status: Milestone 1 (foundation). This README grows with each milestone.
+> Status: Milestone 2 (solo trivia). This README grows with each milestone.
 
 ## Run locally
 
-Requirements: Node 20.9+ (22 recommended). Postgres is only needed for the database tests.
+Requirements: Node 20.9+ (22 recommended) and Docker (for the local Supabase).
 
 ```bash
 cd sahra
 npm install
+npm run db:start     # local Supabase in Docker: migrations + seed content, writes .env.local
 npm run dev
 ```
 
-Open http://localhost:3000 for Arabic, or http://localhost:3000/en for English. The design guide is at `/design`.
+Open http://localhost:3000 for Arabic, or http://localhost:3000/en for English. Try **العب الآن → فردي → ليلة الأسئلة**. The design guide is at `/design`.
 
-The app runs without Supabase. To connect a project, copy `.env.example` to `.env.local` and fill in the values from Supabase (Project Settings → API). The `/design` page shows "Anonymous guest: …" once anonymous sign-in works.
+- `npm run db:stop` stops the local stack; `npm run db:reset` wipes it and re-applies migrations + `supabase/seed.sql`.
+- Without Supabase the pages still render, but games show "not connected to its database yet".
+- To use a cloud project instead, copy `.env.example` to `.env.local` and fill it in (Project Settings → API).
 
 ## Set up Supabase (free tier)
 
 1. Create a project at supabase.com.
 2. In Authentication → Sign In / Providers, turn on **Allow anonymous sign-ins**. Leave the **Email** provider on (it's used for magic links).
+   In Authentication → Rate Limits, raise **anonymous sign-ins per hour** from 30 to about 150: all phones at one gathering share the venue's Wi-Fi IP.
 3. Apply the migrations. Either:
    - with the CLI: `npx supabase login`, then `npx supabase link --project-ref <ref>`, then `npx supabase db push`, or
    - paste each file in `supabase/migrations/` (in order) into the SQL editor.
@@ -70,9 +74,11 @@ update public.profiles set is_admin = true where id = '<your auth user id>';
 ```bash
 npm test             # unit tests (database tests are skipped without TEST_DATABASE_URL)
 npm run db:test      # migration + RLS tests on a throwaway local Postgres (no Docker)
-npm run build && npm run test:e2e   # Playwright: phone and 1280x720 host viewports
+npm run build && npm run test:e2e   # Playwright: phone and 1280x720 host viewports (needs `npm run db:start`)
 npm run ci           # lint + typecheck + content check + tests + build
 ```
+
+The solo e2e tests play real games against the local Supabase, using the seed answers to answer right or wrong on purpose, and include anti-cheat checks (fake timestamps, double submissions, forged rounds, other players' games).
 
 GitHub Actions runs everything, including the database and e2e tests, from `.github/workflows/sahra-ci.yml`.
 

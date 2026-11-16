@@ -58,6 +58,7 @@ design-reference/        PNG screenshots of every screen
 
 ## Commands (from `sahra/`)
 
+- `npm run db:start`: local Supabase in Docker (migrations + seed) and writes `.env.local`. `db:stop`, `db:reset`. In a cloud container, start Docker first with `dockerd &`.
 - `npm run dev`: dev server on http://localhost:3000
 - `npm test`: Vitest. DB tests run only when `TEST_DATABASE_URL` is set.
 - `npm run db:test`: starts a throwaway local Postgres (no Docker) and runs the migration and RLS tests
@@ -81,6 +82,16 @@ design-reference/        PNG screenshots of every screen
 - Re-importing content never downgrades an approved or retired item to draft.
 - Banned "Who among us?" traits (appearance, religion, weight, health, family status) are never approved and never used.
 - Text filter: `lib/content/textFilter.ts` with `content/blocklist.json` masks matches with `***` and flags the entry. Use it for player names and prompt answers.
+
+## Solo trivia (built in Milestone 2)
+
+- Pure logic: `lib/game/scoring.ts` (points, max score, XP, badges, `serverTimeLeft`/`countdownSeconds`), `lib/game/round.ts` (round building, option shuffle, 50:50, daily pick, `acceptProposedRound`), `lib/game/soloTrivia.ts` (reducer: `question → reveal → … → finished`), `lib/game/dayStreak.ts` (daily play streak, Amman calendar day).
+- Server: `POST /api/solo` (actions: start, state, answer, fifty, next, report) → `lib/server/solo.ts`. The state lives in `games.progress` (players can't read it). Every step goes through `solo_commit` (optimistic `games.version`, so replays can't score twice), and the end goes through `solo_finish` (score, XP, badges, streak in one transaction).
+- `GET /api/solo/catalog` returns question metadata only (no text or answers) plus the player's recent and reported ids. The setup screen previews the exact round with `buildRound`, so "highest possible score" is exact; the server re-checks the ids with `acceptProposedRound`.
+- Timing: the countdown shows `ceil(remaining)`, so 0 = timeout and scores 0. The server measures from the request's arrival time, with a 1.5 s grace.
+- Profile: `GET/PATCH/DELETE /api/me`. Names pass the text filter, and DELETE removes the auth user (cascade).
+- The daily challenge is the same question for everyone each Amman day (`daily_challenges`), one attempt per player (unique index). English players get its approved `-en` translation if there is one.
+- `lib/server/events.ts` `logEvent()` is the analytics writer (best effort, never throws).
 
 ## Real-time rooms
 
