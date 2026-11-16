@@ -128,6 +128,21 @@ design-reference/        PNG screenshots of every screen
 - **UI:** `components/charades/*`.
 - **Team names** (all team games): فريق الشاي / فريق القهوة (Team Tea / Team Coffee), as in the designs.
 
+**Secret prompts + Who among us? (Milestone 6).**
+- **Logic:** `lib/game/whoAmongUs.ts` is the pure reducer: `lobby → prompts_collect → vote_open → reveal → … → final`. It also has `tallyVotes`, `buildWhoRounds` and `whoFinal`. The game needs at least 3 players and plays up to 8 rounds, with a 20 s vote each.
+- **Two round kinds:**
+  - **trait:** "مين فينا… {trait}؟". The top-voted player gets the trait as a title, saved to `titles` (with the room's group if any); a tie gives every tied player the title.
+  - **answer:** a secret answer shown anonymously ("مين فينا كتبها؟"). The reveal names the author, except when they vetoed.
+- **Scoring:** voters for the top-voted player (any tied player) get +100. Self-votes are refused (API and DB check).
+- **Veto:** only the author can tap "تخطّى العرض". They learn the answer is theirs through a `my_answer` secret on their private channel. Before the reveal, a veto cancels the round (no points, answer removed, author never shown). After the reveal, it hides the answer and the author; the points stand.
+- **Secret prompts:**
+  - `GET/POST /api/rooms/[code]/prompts`, available from the lobby card (`/join/[code]/prompts`) or inline during `prompts_collect`. Prompts are approved, Arabic, and allowed by the room's mood (`mood_min`), so the "friends" seed prompt is skipped on Family nights.
+  - Answers pass the text filter; flagged answers are never used. There's one answer or skip per prompt (unique index). The TV sees progress counts only; answers are deleted after 30 days by the nightly job.
+- **Votes:** `POST /api/rooms/[code]/vote`, stored in `votes` (one per voter per round). The reveal fires when everyone has voted, or on `timeup`.
+- **Server and UI:** `lib/server/whoGame.ts`; `components/who/*`, including the animated `VoteBars` (top in tomato, others in sunflower, counts as text with Arabic plural forms).
+- **Titles page:** `/titles` (bottom-nav tab الألقاب) lists the titles from rooms you were in (RLS).
+- **Kassa's lines** (`content/kassa.ar.json`) are still drafts, so the reveal uses UI copy ("{name}، الشعب قال كلمته!", the brief's own example) until Milestone 8 wires approved lines.
+
 **Spec rules (Milestones 4–6 build on these):**
 - One Supabase Realtime channel per room, `room:{code}`. Presence holds the player list and broadcast carries game messages. Codes are 4 random digits, unique among non-ended rooms (partial unique index). Rooms expire after 6 hours of inactivity.
 - **The host screen is the authority.** It runs the reducer state machine and broadcasts the full public state after every change. Phones send intents only (`answer`, `vote`, `skip`, `got_it`, `steal`, `ready`), and the host ignores invalid or late ones.

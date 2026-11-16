@@ -178,11 +178,12 @@ describe.skipIf(!TEST_DATABASE_URL)("database: migrations + RLS", () => {
       const seat = (
         await db.query("insert into room_players (room_id, guest_device_id, display_name) values ($1,'d','x') returning id", [room])
       ).rows[0].id;
+      await db.query("insert into prompts (id, lang, text, status) values ('prompt-0002','ar','p2','approved'), ('prompt-0003','ar','p3','approved')");
       await db.query(
         `insert into prompt_answers (room_id, room_player_id, prompt_id, answer_text, delete_after, saved_by_group) values
          ($1,$2,'prompt-0001','old', now() - interval '1 day', false),
-         ($1,$2,'prompt-0001','saved', now() - interval '1 day', true),
-         ($1,$2,'prompt-0001','fresh', now() + interval '1 day', false)`,
+         ($1,$2,'prompt-0002','saved', now() - interval '1 day', true),
+         ($1,$2,'prompt-0003','fresh', now() + interval '1 day', false)`,
         [room, seat],
       );
       expect((await db.query("select purge_expired_prompt_answers() as n")).rows[0].n).toBe(1);

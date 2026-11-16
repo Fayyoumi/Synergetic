@@ -3,7 +3,7 @@
 Arabic-first party games for Arab gatherings, hosted by Kassa the tea glass.
 Next.js 16 + Supabase. Read `../CLAUDE.md` for conventions and `docs/SAHRA_SPEC.md` for the full spec.
 
-> Status: Milestone 5 (charades). This README grows with each milestone.
+> Status: Milestone 6 (secret prompts + Who among us?). This README grows with each milestone.
 
 ### Try a room locally
 

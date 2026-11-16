@@ -15,6 +15,7 @@ import { hasConsented, rememberConsent, roomsApi } from "@/lib/rooms/client";
 import { ConnBadge, ConnToasts, PlayerList, SelfConnBanner } from "./Presence";
 import { PhoneTrivia } from "@/components/trivia/PhoneTrivia";
 import { PhoneCharades } from "@/components/charades/PhoneCharades";
+import { PhoneWho } from "@/components/who/PhoneWho";
 import type { SecretView } from "@/lib/rooms/game";
 import { gameApi } from "@/lib/rooms/client";
 import { useRoomGame } from "@/lib/rooms/useRoomGame";
@@ -181,6 +182,7 @@ function JoinForm({ code, onJoined }: { code: string; onJoined: (room: RoomView)
 
 function PlayerLobby({ initial }: { initial: RoomView }) {
   const t = useTranslations("lobby");
+  const tp = useTranslations("prompts");
   const tm = useTranslations("moods");
   const th = useTranslations("host");
   const tc = useTranslations("common");
@@ -258,7 +260,29 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
           {tconn("host")}
           <ConnBadge status={hostStatus} />
         </span>
-        {game.kind === "charades" ? (
+        {game.kind === "who_among_us" ? (
+          <PhoneWho
+            code={room.code}
+            game={game}
+            mySeatId={initial.mySeatId}
+            seats={room.seats}
+            secret={secret}
+            offset={offset}
+            onVote={async (index, target) => {
+              const r = await fetch(`/api/rooms/${room.code}/vote`, {
+                method: "POST",
+                headers: { "content-type": "application/json" },
+                body: JSON.stringify({ index, target }),
+              })
+                .then((x) => x.json())
+                .catch(() => ({ ok: false }));
+              if (r.ok) setGame(r.game);
+              return r.ok || r.error === "already_voted";
+            }}
+            onVeto={() => void gameApi.command(room.code, { action: "veto" }).then((r) => r.ok && setGame(r.game))}
+            onTimeUp={() => void gameApi.command(room.code, { action: "timeup", index: game.index }).then((r) => r.ok && setGame(r.game))}
+          />
+        ) : game.kind === "charades" ? (
           <PhoneCharades
             game={game}
             mySeatId={initial.mySeatId}
@@ -311,6 +335,16 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
           <ConnBadge status={hostStatus} />
         </span>
       </div>
+      {room.game === "who_among_us" && (
+        <Link
+          href={`/join/${room.code}/prompts`}
+          className="flex flex-col gap-1 rounded-[20px] ink-border-thick bg-chair p-4"
+          data-testid="prompts-card"
+        >
+          <span className="display-text text-2xl">{tp("cardTitle")}</span>
+          <span className="font-semibold">{tp("cardCta")}</span>
+        </Link>
+      )}
       <h2 className="display-text text-2xl">{t("players", { count: formatNumber(room.seats.length, locale) })}</h2>
       <PlayerList seats={room.seats} tracker={tracker} mySeatId={initial.mySeatId} />
       <p className="text-sm text-muted">{tconn("fairPlay")}</p>

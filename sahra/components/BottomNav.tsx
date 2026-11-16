@@ -11,6 +11,12 @@ const icons = {
       <path d="M8 11v4M6 13h4M15.5 12.5h.01M18 14.5h.01" />
     </>
   ),
+  titles: (
+    <>
+      <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z" />
+      <path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4" />
+    </>
+  ),
   profile: (
     <>
       <circle cx="12" cy="8" r="4" />
@@ -22,6 +28,7 @@ const icons = {
 const items = [
   { key: "home", href: "/" },
   { key: "play", href: "/play" },
+  { key: "titles", href: "/titles" },
   { key: "profile", href: "/profile" },
 ] as const;
 
@@ -31,7 +38,7 @@ export function BottomNav() {
   const pathname = usePathname();
   return (
     <nav aria-label={t("label")} className="sticky bottom-0 mt-auto border-t-2 border-ink bg-paper">
-      <ul className="mx-auto grid max-w-[480px] grid-cols-3">
+      <ul className="mx-auto grid max-w-[480px] grid-cols-4">
         {items.map(({ key, href }) => {
           const active = href === "/" ? pathname === "/" : pathname.startsWith(href);
           return (

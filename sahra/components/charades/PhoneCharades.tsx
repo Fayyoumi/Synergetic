@@ -40,7 +40,7 @@ export function PhoneCharades({ game, mySeatId, seats, secret, offset, busy, onC
     () => setTimeout(onTimeUp, 300 + Math.random() * 1200),
     game.turnSeconds,
   );
-  const word = isActor && secret && secret.turn === game.turn ? secret : null;
+  const word = isActor && secret?.kind === "charades_word" && secret.turn === game.turn ? secret : null;
   const acting = game.phase === "turn_active" && isActor;
 
   return (

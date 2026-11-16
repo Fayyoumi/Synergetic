@@ -18,6 +18,7 @@ import type { GameCommand, GameErrorCode, GameView, SecretView, TeamPublicView }
 import { CATEGORIES } from "@/lib/content/schemas";
 import { logEvent } from "./events";
 import { CharadesGame } from "./charadesGame";
+import { WhoGame } from "./whoGame";
 
 export type RoomRow = {
   id: string;
@@ -27,6 +28,7 @@ export type RoomRow = {
   game: string | null;
   game_state: { kind?: string; phase?: string } | null;
   state_version: number;
+  mood?: "family" | "friends" | "roast";
 };
 
 type QuestionRow = {
@@ -69,6 +71,7 @@ export class RoomGameService {
     const member = await this.memberRole(room);
     if (!member) return fail("not_member");
     if (room.game === "charades") return { ok: true, game: await new CharadesGame(this).view(room) };
+    if (room.game === "who_among_us") return { ok: true, game: await new WhoGame(this).view(room) };
     return { ok: true, game: await this.view(room, stateOf(room)) };
   }
 
@@ -96,6 +99,7 @@ export class RoomGameService {
       return this.get(code);
     }
     if (room.game === "charades") return new CharadesGame(this).command(room, role, cmd);
+    if (room.game === "who_among_us") return new WhoGame(this).command(room, role, cmd);
 
     if (cmd.action === "timeup") return this.reveal(room, cmd.index, true);
     if (role !== "host") return fail("not_host");
@@ -307,6 +311,7 @@ export class RoomGameService {
     const { data } = await this.db.from("rooms").select("id, code, host_profile_id, status, game, game_state, state_version").eq("id", roomId).single<RoomRow>();
     if (!data) return;
     if (data.game === "charades") return new CharadesGame(this).remove(data, seatId);
+    if (data.game === "who_among_us") return new WhoGame(this).remove(data, seatId);
     const state = stateOf(data);
     if (!state.players[seatId]) return;
     const result = this.reduce(state, { type: "remove", seatId });
@@ -322,7 +327,7 @@ export class RoomGameService {
   async load(code: string): Promise<RoomRow | null> {
     const { data } = await this.db
       .from("rooms")
-      .select("id, code, host_profile_id, status, game, game_state, state_version")
+      .select("id, code, host_profile_id, status, game, game_state, state_version, mood")
       .eq("code", code)
       .neq("status", "ended")
       .order("created_at", { ascending: false })

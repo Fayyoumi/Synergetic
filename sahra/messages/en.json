@@ -73,7 +73,8 @@
     "label": "Main navigation",
     "home": "Home",
     "play": "Play",
-    "profile": "Profile"
+    "profile": "Profile",
+    "titles": "Titles"
   },
   "categories": {
     "geo": "Geography",
@@ -153,7 +154,7 @@
       }
     },
     "creating": "Setting up the room…",
-    "gamesSoonNote": "Team Trivia and Charades are ready! Who among us? arrives in the next milestone."
+    "gamesSoonNote": "All group games are ready: Team Trivia, Charades and Who among us?"
   },
   "setup": {
     "categories": "Pick categories",
@@ -363,7 +364,9 @@
       "need_two_teams": "Each team needs at least one player.",
       "no_questions": "No questions are ready for this choice.",
       "generic": "Something went wrong. Try again.",
-      "no_words": "No charades words are ready."
+      "no_words": "No charades words are ready.",
+      "need_players": "Who among us? needs at least 3 players.",
+      "no_rounds": "Not enough traits or secret answers for a round."
     }
   },
   "teams": {
@@ -451,5 +454,65 @@
     "difficulty1": "Easy",
     "difficulty2": "Medium",
     "difficulty3": "Hard"
+  },
+  "prompts": {
+    "title": "Secret questions",
+    "secretLabel": "Secret question · nobody sees your answer before the night",
+    "answerLabel": "Your answer",
+    "placeholder": "Be honest… Kassa only spills on the night",
+    "send": "Send answer",
+    "skip": "Skip",
+    "progress": "{n} / {total}",
+    "kassaSafe": "Your secret is safe… until the night.",
+    "kassaLast": "Last one! Leave the rest to me.",
+    "masked": "We hid a word that isn't nice from your answer.",
+    "doneTitle": "Done! Your secrets are with me.",
+    "doneBody": "Wait for the host to start the voting.",
+    "cardTitle": "Secret questions",
+    "cardBody": "{done} of {total} answered",
+    "cardCta": "Continue the secret questions",
+    "none": "No secret questions tonight."
+  },
+  "who": {
+    "lead": "Who among us…",
+    "traitLine": "{trait}?",
+    "answerLead": "One of you wrote:",
+    "whoWrote": "Who among us wrote it?",
+    "roundOf": "Round {n} of {total}",
+    "seconds": "{s} seconds",
+    "collecting": "Collecting secrets",
+    "collectingBody": "Everyone answers the secret questions on their phone. Nobody sees anyone else's answers.",
+    "progress": "{done} of {total}",
+    "openVoting": "Let's vote!",
+    "voted": "Voted",
+    "votedCount": "{count} of {total} voted",
+    "kassaVote": "Vote honestly… I'll spill the result on the big screen.",
+    "kassaVoted": "Your vote for {name} is in. Uh-oh!",
+    "yourAnswer": "This is your answer! Nobody else knows.",
+    "veto": "Skip the reveal",
+    "vetoHint": "If you don't want it shown as yours, tap here.",
+    "vetoed": "The author asked to skip this reveal.",
+    "reveal": "Result",
+    "votes": "{n, plural, one {{count} vote} other {{count} votes}}",
+    "kassaWinner": "{name}, the people have spoken!",
+    "kassaTie": "A tie! {names}",
+    "noVotes": "Nobody voted!",
+    "titleWon": "Round title: {title}",
+    "authorWas": "It was {name}!",
+    "youGot": "+100 for you! You voted with the majority.",
+    "youMissed": "You didn't vote with the majority this time.",
+    "next": "Next round",
+    "toFinal": "Final results",
+    "finalTitle": "Who among us? is over!",
+    "titlesTitle": "Titles of the night",
+    "noTitles": "No titles tonight.",
+    "yourPoints": "Your points: {points}",
+    "selfNote": "You can't vote for yourself.",
+    "you": "(you)"
+  },
+  "titles": {
+    "title": "Titles",
+    "empty": "No titles yet. Play Who among us? with your people!",
+    "room": "Sahra {code}"
   }
 }

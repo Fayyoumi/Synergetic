@@ -13,6 +13,7 @@ import { ROOM_GAMES, type RoomErrorCode, type RoomGame, type RoomMood, type Room
 import { MoodPicker } from "./MoodPicker";
 import { HostTrivia } from "@/components/trivia/HostTrivia";
 import { HostCharades } from "@/components/charades/HostCharades";
+import { HostWho } from "@/components/who/HostWho";
 import type { GameErrorCode } from "@/lib/rooms/game";
 import { gameApi } from "@/lib/rooms/client";
 import { useRoomGame } from "@/lib/rooms/useRoomGame";
@@ -151,7 +152,18 @@ export function HostLobby({ code }: { code: string }) {
         <div className="px-10">
           <SelfConnBanner state={channelState} />
         </div>
-        {game.kind === "charades" ? (
+        {game.kind === "who_among_us" ? (
+          <HostWho
+            game={game}
+            seats={room.seats}
+            tracker={tracker}
+            offset={offset}
+            busy={busy}
+            onCommand={(action) => void command({ action })}
+            onTimeUp={() => void command({ action: "timeup", index: game.index })}
+            onEnd={() => void act({ action: "end" })}
+          />
+        ) : game.kind === "charades" ? (
           <HostCharades
             game={game}
             seats={room.seats}
@@ -182,7 +194,7 @@ export function HostLobby({ code }: { code: string }) {
   const playerCount = formatNumber(room.seats.length, locale);
   const displayCode = roomCode(room.code);
   const teamGame = room.game === "trivia_team" || room.game === "charades";
-  const canStart = teamGame && room.seats.length >= 2;
+  const canStart = (teamGame && room.seats.length >= 2) || (room.game === "who_among_us" && room.seats.length >= 3);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -323,7 +335,7 @@ export function HostLobby({ code }: { code: string }) {
           )}
           {gameError && (
             <p role="alert" className="text-xl font-bold text-tomato">
-              {t(`errors.${gameError === "need_two_teams" || gameError === "no_questions" || gameError === "no_words" ? gameError : "generic"}`)}
+              {t(`errors.${gameError === "need_two_teams" || gameError === "no_questions" || gameError === "no_words" || gameError === "need_players" || gameError === "no_rounds" ? gameError : "generic"}`)}
             </p>
           )}
 
@@ -353,7 +365,7 @@ export function HostLobby({ code }: { code: string }) {
               </Button>
             )}
           </div>
-          {!teamGame && <p className="text-lg text-muted">{t("startSoon")}</p>}
+          {room.game === "who_among_us" && room.seats.length < 3 && <p className="text-lg text-muted">{t("errors.need_players")}</p>}
           {teamGame && room.seats.length < 2 && <p className="text-lg text-muted">{t("needPlayers")}</p>}
         </section>
       </div>
