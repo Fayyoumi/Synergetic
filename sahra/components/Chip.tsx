@@ -10,9 +10,22 @@ const tones = {
 export type ChipTone = keyof typeof tones;
 
 /** Static label chip. */
-export function Chip({ tone = "paper", children, className }: { tone?: ChipTone; children: ReactNode; className?: string }) {
+export function Chip({
+  tone = "paper",
+  size = "sm",
+  children,
+  className,
+}: {
+  tone?: ChipTone;
+  /** "lg" for the TV host screen. */
+  size?: "sm" | "lg";
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <span className={`inline-flex items-center rounded-full ink-border px-3 py-1 text-sm font-bold ${tones[tone]} ${className ?? ""}`}>
+    <span
+      className={`inline-flex items-center rounded-full ink-border font-bold ${size === "lg" ? "px-4 py-1.5 text-xl" : "px-3 py-1 text-sm"} ${tones[tone]} ${className ?? ""}`}
+    >
       {children}
     </span>
   );

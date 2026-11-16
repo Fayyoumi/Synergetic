@@ -153,7 +153,7 @@
       }
     },
     "creating": "Setting up the room…",
-    "gamesSoonNote": "The games themselves arrive in the next milestones; for now you can try the room and joining."
+    "gamesSoonNote": "Team Trivia is ready! Charades and Who among us? arrive in the next milestones."
   },
   "setup": {
     "categories": "Pick categories",
@@ -353,6 +353,57 @@
       "trivia_team": "Team Trivia",
       "charades": "Charades",
       "who_among_us": "Who among us?"
+    },
+    "teams": "Teams",
+    "teamTap": "Tap a team to switch",
+    "balance": "Balance teams",
+    "settings": "Round settings",
+    "count": "{count} questions",
+    "errors": {
+      "need_two_teams": "Each team needs at least one player.",
+      "no_questions": "No questions are ready for this choice.",
+      "generic": "Something went wrong. Try again."
     }
+  },
+  "teams": {
+    "1": "Team Glass",
+    "2": "Team Teapot",
+    "short1": "Glass",
+    "short2": "Teapot",
+    "score": "{points} points",
+    "tie": "It's a tie!",
+    "wins": "{team} wins!"
+  },
+  "trivia": {
+    "questionOf": "Question {n} of {total}",
+    "answeredCount": "{count} of {total} answered",
+    "answered": "Answered",
+    "waitingFor": "Waiting",
+    "next": "Next",
+    "toScoreboard": "Scores",
+    "nextQuestion": "Next question",
+    "toFinal": "Final results",
+    "whoGotIt": "Who got it",
+    "nobody": "Nobody!",
+    "thisQuestion": "This question",
+    "scoreboard": "Scoreboard",
+    "topPlayers": "Top players",
+    "finalTitle": "Round over!",
+    "playAgain": "Play again",
+    "pointsShort": "{points}",
+    "yourTeam": "Your team: {team}",
+    "pickAnswer": "Pick your answer",
+    "youAnswered": "Your answer: {letter}. Waiting for the others…",
+    "tooLate": "Time's up for this question.",
+    "lookAtScreen": "The question is on the big screen",
+    "yourResult": "Your result",
+    "teamGot": "Your team got {points} on this question",
+    "yourTotal": "Your total: {points}",
+    "watchScreen": "Watch the screen… the next question is coming",
+    "yourRank": "Your rank: {rank} of {total}",
+    "spectating": "You joined mid-game; you'll play from the next question.",
+    "badges": "Your badges",
+    "xp": "+{xp} XP",
+    "listSeparator": ", "
   }
 }

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { roomBroadcast, roomTopic, type PresencePayload, type RoomView } from "@/lib/rooms/api";
+import type { TeamPublicView } from "@/lib/rooms/game";
 import { getBrowserSupabase } from "@/lib/supabase/client";
 import { createTracker, HOST_KEY, observe, statusOf, type ConnStatus, type PresenceTracker } from "./presence";
 
@@ -17,6 +18,13 @@ type Options = {
   seatIds: readonly string[];
   onRoom?: (room: Omit<RoomView, "role" | "mySeatId">) => void;
   onRemoved?: (seatId: string) => void;
+  onState?: (game: TeamPublicView) => void;
+  onAnswered?: (seatId: string, index: number) => void;
+  /**
+   * Called every time the channel (re)connects. Messages sent while this
+   * client wasn't subscribed are lost, so callers re-fetch room and game here.
+   */
+  onSubscribed?: () => void;
 };
 
 const RETRY_MS = [1000, 2000, 4000, 8000, 15000];
@@ -29,14 +37,14 @@ function visibility(): PresencePayload["status"] {
  * Joins the room's private channel, publishes this client's presence
  * (active / away) and tracks everyone else's. Reconnects on its own.
  */
-export function useRoomChannel({ code, role, seatId, seatIds, onRoom, onRemoved }: Options) {
+export function useRoomChannel({ code, role, seatId, seatIds, onRoom, onRemoved, onState, onAnswered, onSubscribed }: Options) {
   const [snapshot, setSnapshot] = useState<Record<string, ConnStatus>>({});
   const [synced, setSynced] = useState(0);
   const [channelState, setChannelState] = useState<ChannelState>("connecting");
   const [attempt, setAttempt] = useState(0);
-  const handlers = useRef({ onRoom, onRemoved });
+  const handlers = useRef({ onRoom, onRemoved, onState, onAnswered, onSubscribed });
   useEffect(() => {
-    handlers.current = { onRoom, onRemoved };
+    handlers.current = { onRoom, onRemoved, onState, onAnswered, onSubscribed };
   });
 
   const presenceKey = role === "host" ? HOST_KEY : seatId;
@@ -80,13 +88,24 @@ export function useRoomChannel({ code, role, seatId, seatIds, onRoom, onRemoved 
           const parsed = roomBroadcast.safeParse(msg);
           if (parsed.success && parsed.data.type === "removed") handlers.current.onRemoved?.(parsed.data.seatId);
         })
+        .on("broadcast", { event: "state" }, ({ payload: msg }) => {
+          const parsed = roomBroadcast.safeParse(msg);
+          if (parsed.success && parsed.data.type === "state") handlers.current.onState?.(parsed.data.game);
+        })
+        .on("broadcast", { event: "answered" }, ({ payload: msg }) => {
+          const parsed = roomBroadcast.safeParse(msg);
+          if (parsed.success && parsed.data.type === "answered") handlers.current.onAnswered?.(parsed.data.seatId, parsed.data.index);
+        })
         .subscribe((status) => {
           if (disposed) return;
           if (status === "SUBSCRIBED") {
             setChannelState("live");
             void channel!.track(payload());
+            handlers.current.onSubscribed?.();
           } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
             setChannelState("reconnecting");
+            // A refused channel can mean we were removed or the room ended: re-check.
+            handlers.current.onSubscribed?.();
             if (!retryTimer) {
               retryTimer = setTimeout(() => setAttempt((a) => a + 1), RETRY_MS[Math.min(attempt, RETRY_MS.length - 1)]);
             }

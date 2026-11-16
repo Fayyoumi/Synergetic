@@ -2,6 +2,7 @@
 
 import { ensureGuestSession } from "@/lib/supabase/session";
 import type { HostAction, RoomGame, RoomResponse } from "./api";
+import type { GameCommand, GameResponse } from "./game";
 
 const DEVICE_KEY = "sahra:device";
 
@@ -33,6 +34,26 @@ async function call(path: string, init?: RequestInit): Promise<RoomResponse> {
     return { ok: false, error: "server_error" };
   }
 }
+
+async function gameCall(path: string, init?: RequestInit): Promise<GameResponse> {
+  try {
+    const res = await fetch(path, {
+      ...init,
+      headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
+      cache: "no-store",
+    });
+    return (await res.json()) as GameResponse;
+  } catch {
+    return { ok: false, error: "server_error" };
+  }
+}
+
+export const gameApi = {
+  get: (code: string) => gameCall(`/api/rooms/${code}/game`),
+  command: (code: string, cmd: GameCommand) => gameCall(`/api/rooms/${code}/game`, { method: "POST", body: JSON.stringify(cmd) }),
+  answer: (code: string, body: { index: number; choice: number; answeredAt: number | null }) =>
+    gameCall(`/api/rooms/${code}/answer`, { method: "POST", body: JSON.stringify(body) }),
+};
 
 export const roomsApi = {
   create: (game: RoomGame) => call("/api/rooms", { method: "POST", body: JSON.stringify({ game }) }),

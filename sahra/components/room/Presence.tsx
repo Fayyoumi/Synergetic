@@ -35,6 +35,7 @@ export function PlayerList({
   showIncidents,
   large,
   onRemove,
+  renderExtra,
 }: {
   seats: Seat[];
   tracker: PresenceTracker;
@@ -42,6 +43,8 @@ export function PlayerList({
   showIncidents?: boolean;
   large?: boolean;
   onRemove?: (seat: Seat) => void;
+  /** Extra control per seat (e.g. the host's team switch). */
+  renderExtra?: (seat: Seat) => React.ReactNode;
 }) {
   const t = useTranslations("lobby");
   const tc = useTranslations("conn");
@@ -80,6 +83,7 @@ export function PlayerList({
                 </span>
               )}
             </span>
+            {renderExtra?.(s)}
             {onRemove && (
               <button
                 type="button"

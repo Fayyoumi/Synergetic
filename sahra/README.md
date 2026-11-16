@@ -3,13 +3,14 @@
 Arabic-first party games for Arab gatherings, hosted by Kassa the tea glass.
 Next.js 16 + Supabase. Read `../CLAUDE.md` for conventions and `docs/SAHRA_SPEC.md` for the full spec.
 
-> Status: Milestone 3 (rooms). This README grows with each milestone.
+> Status: Milestone 4 (team trivia on the host screen). This README grows with each milestone.
 
 ### Try a room locally
 
 1. On the laptop (the "TV"): http://localhost:3000/play/group → pick a game. The host screen opens with a QR code and a 4-digit code.
 2. On phones on the same Wi-Fi, open `http://<laptop-ip>:3000/join/<code>` (or scan the QR code if it points at a reachable address). To simulate phones on one computer, use separate private windows.
-3. Leave the app on a phone, lock it, or close the tab: everyone (host screen and other phones) sees "left the app" or "disconnected", and the host screen counts how many times each player left.
+3. Pick "ليلة الأسئلة بفرق", choose 5/10/15 questions and a difficulty, tap a player's team chip to move them, then "يلا نبدأ!". Phones answer; the TV reveals, shows the scoreboard, and ends with the winner.
+4. Leave the app on a phone, lock it, or close the tab: everyone (host screen and other phones) sees "left the app" or "disconnected", and the host screen counts how many times each player left.
 
 ## Run locally
 

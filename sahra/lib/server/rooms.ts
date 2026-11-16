@@ -16,6 +16,7 @@ import {
   type Seat,
 } from "@/lib/rooms/api";
 import { logEvent } from "./events";
+import { RoomGameService } from "./roomGame";
 
 const filterName = createTextFilter(blocklist);
 const ROOM_TTL_MS = 6 * 60 * 60 * 1000;
@@ -172,6 +173,7 @@ export class RoomService {
           .eq("id", action.seatId)
           .eq("room_id", room.id);
         await this.send(room.code, { v: 1, type: "removed", seatId: action.seatId });
+        await new RoomGameService(this.db, this.userId).removeFromGame(room.id, action.seatId);
         break;
       case "end": {
         await this.db.from("rooms").update({ status: "ended" }).eq("id", room.id);

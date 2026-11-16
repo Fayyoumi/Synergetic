@@ -56,3 +56,61 @@ describe.skipIf(!TEST_DATABASE_URL)("database: realtime room topics", () => {
     expect(await allowed(PLAYER, "room:4242")).toBe(false);
   });
 });
+
+describe.skipIf(!TEST_DATABASE_URL)("database: room game state", () => {
+  let db: Client;
+  let drop: () => Promise<void>;
+  let room: string;
+  let seat: string;
+  let game: string;
+
+  beforeAll(async () => {
+    ({ client: db, drop } = await createTestDatabase());
+    for (const id of [HOST, PLAYER]) await db.query("insert into auth.users (id) values ($1)", [id]);
+    await db.query(`insert into questions (id, lang, category, difficulty, question, options, answer_index, source_url, status)
+      values ('geo-0001','ar','geo','easy','q',array['a','b','c','d'],0,'https://e.org','approved')`);
+    room = (await db.query("insert into rooms (code, host_profile_id, game_state) values ('5151', $1, '{\"secret\":1}') returning id", [HOST])).rows[0].id;
+    seat = (await db.query("insert into room_players (room_id, profile_id, display_name) values ($1,$2,'ليلى') returning id", [room, PLAYER])).rows[0].id;
+    game = (await db.query("insert into games (room_id, type) values ($1, 'trivia_team') returning id", [room])).rows[0].id;
+  }, 60_000);
+  afterAll(async () => drop?.());
+
+  it("hides game_state (and pending answers) from everyone but the server", async () => {
+    expect(await as(db, PLAYER, async () => (await db.query("select code from rooms")).rows)).toEqual([{ code: "5151" }]);
+    await expect(as(db, HOST, () => db.query("select game_state from rooms"))).rejects.toThrow(/permission denied/);
+    await db.query("insert into room_pending_answers (game_id, question_index, room_player_id, choice_index, time_left) values ($1,0,$2,0,12)", [game, seat]);
+    expect(await as(db, PLAYER, async () => (await db.query("select * from room_pending_answers")).rowCount)).toBe(0);
+  });
+
+  it("keeps one pending answer per player per question", async () => {
+    await expect(
+      db.query("insert into room_pending_answers (game_id, question_index, room_player_id, choice_index, time_left) values ($1,0,$2,1,10)", [game, seat]),
+    ).rejects.toThrow(/duplicate key/);
+  });
+
+  it("commits state with a version check", async () => {
+    const v = (await db.query("select state_version from rooms where id = $1", [room])).rows[0].state_version;
+    expect((await db.query("select room_commit($1, $2, '{\"phase\":\"question\"}') ok", [room, v])).rows[0].ok).toBe(true);
+    expect((await db.query("select room_commit($1, $2, '{}') ok", [room, v])).rows[0].ok).toBe(false);
+  });
+
+  it("records scored answers at the reveal exactly once, and scores + XP at the end", async () => {
+    const v = (await db.query("select state_version from rooms where id = $1", [room])).rows[0].state_version;
+    const answers = JSON.stringify([
+      { question_id: "geo-0001", room_player_id: seat, question_index: 0, choice_index: 0, correct: true, time_left: 12, points: 140 },
+    ]);
+    expect((await db.query("select room_reveal_commit($1,$2,'{}',$3,$4) ok", [room, v, game, answers])).rows[0].ok).toBe(true);
+    expect((await db.query("select room_reveal_commit($1,$2,'{}',$3,$4) ok", [room, v, game, answers])).rows[0].ok).toBe(false);
+    expect(Number((await db.query("select count(*) n from answers where game_id = $1", [game])).rows[0].n)).toBe(1);
+    expect((await db.query("select profile_id from answers where game_id = $1", [game])).rows[0].profile_id).toBe(PLAYER);
+
+    const scores = JSON.stringify([{ room_player_id: seat, points: 140, xp: 14, badges: ["first_round"] }]);
+    expect((await db.query("select room_game_finish($1,$2,'{}',$3,$4) ok", [room, v + 1, game, scores])).rows[0].ok).toBe(true);
+    expect((await db.query("select total_xp from profiles where id = $1", [PLAYER])).rows[0].total_xp).toBe(14);
+    expect((await db.query("select ended_at is not null as ended from games where id = $1", [game])).rows[0].ended).toBe(true);
+  });
+
+  it("keeps the room game functions away from players", async () => {
+    await expect(as(db, HOST, () => db.query("select room_commit($1, 0, '{}')", [room]))).rejects.toThrow(/permission denied/);
+  });
+});

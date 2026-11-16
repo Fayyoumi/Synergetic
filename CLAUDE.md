@@ -103,6 +103,20 @@ design-reference/        PNG screenshots of every screen
 - **Clients may only publish presence.** Every broadcast is sent by the server (`httpSend` with the service role), so players can't forge game or host messages.
 - **Fair play: disconnections are public.** Each client tracks presence `{ role, seatId, status: "active" | "away" }`, where "away" means the page is hidden (app switch or screen lock). It untracks on `pagehide`. Everyone runs the same pure tracker (`lib/realtime/presence.ts`): statuses are active / away / offline, with notices ("X left the app", "X disconnected", "X is back") and per-seat away counts. The host also shows as `host`. UI: `components/room/Presence.tsx` (`ConnBadge`, `PlayerList`, `ConnToasts`, `SelfConnBanner`). Hook: `lib/realtime/useRoomChannel.ts`. Keep this visible in every game screen (host and phones).
 
+**Team trivia (Milestone 4).** The host screen drives the flow and the server checks and scores every step:
+- `lib/game/teamTrivia.ts` is the pure reducer: `lobby → question → reveal → scoreboard → … → final → lobby`. It covers `balanceTeams`, `finalResults`, and late joiners entering at the next question. Removed players stop counting. Members who don't answer (or are disconnected) score 0 and still count in their team's average, so leaving never helps.
+- `lib/server/roomGame.ts` and the routes:
+  - `GET /api/rooms/[code]/game`: the public view, members only;
+  - `POST /api/rooms/[code]/game`: commands. The host sends `start`, `advance`, `lobby`, `team` and `balance`; any member may send `timeup`;
+  - `POST /api/rooms/[code]/answer`: a phone's answer, timed by the server on arrival.
+- Where state lives: `rooms.game_state` holds the full state and is unreadable by clients (column grants). Answers wait in `room_pending_answers`, where clients have no access at all.
+- Each state change runs through `room_commit` (optimistic `rooms.state_version`). The reveal runs through `room_reveal_commit`, which also writes the scored `answers` rows and bumps question counters. The end runs through `room_game_finish`, which writes `scores` and adds profile XP.
+- The reveal fires when everyone has answered, or on `timeup` once 15 s have passed. Any phone can send `timeup`, so the game continues if the TV drops.
+- Broadcasts: `state` (the full `TeamPublicView`, with no answer before the reveal) and `answered` (who answered, never what). Clients keep the newest state by `serverNow` (`lib/rooms/useRoomGame.ts`).
+- On every channel (re)subscribe, clients re-fetch the room and game (`onSubscribed`), so a missed broadcast can't leave a screen stale.
+- UI: `components/trivia/HostTrivia.tsx` (TV) and `PhoneTrivia.tsx`. Connection badges and toasts stay visible during the game.
+- No jokers in team mode (MVP).
+
 **Spec rules (Milestones 4–6 build on these):**
 - One Supabase Realtime channel per room, `room:{code}`. Presence holds the player list and broadcast carries game messages. Codes are 4 random digits, unique among non-ended rooms (partial unique index). Rooms expire after 6 hours of inactivity.
 - **The host screen is the authority.** It runs the reducer state machine and broadcasts the full public state after every change. Phones send intents only (`answer`, `vote`, `skip`, `got_it`, `steal`, `ready`), and the host ignores invalid or late ones.

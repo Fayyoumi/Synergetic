@@ -13,6 +13,9 @@ import { useRoomChannel } from "@/lib/realtime/useRoomChannel";
 import type { RoomErrorCode, RoomView } from "@/lib/rooms/api";
 import { hasConsented, rememberConsent, roomsApi } from "@/lib/rooms/client";
 import { ConnBadge, ConnToasts, PlayerList, SelfConnBanner } from "./Presence";
+import { PhoneTrivia } from "@/components/trivia/PhoneTrivia";
+import { gameApi } from "@/lib/rooms/client";
+import { useRoomGame } from "@/lib/rooms/useRoomGame";
 
 const JOIN_ERRORS = new Set(["not_found", "ended", "full", "minor_mood", "removed", "consent_required"]);
 
@@ -192,6 +195,18 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
     },
     [initial.mySeatId],
   );
+  const { game, setGame, onAnswered, offset, refresh } = useRoomGame(initial.code);
+  // Catch up on anything missed while not subscribed (including being removed).
+  const resync = async () => {
+    const r = await roomsApi.get(initial.code);
+    if (r.ok) {
+      if (!r.room.mySeatId) setRemoved(true);
+      else setRoom(r.room);
+    } else if (r.error === "ended" || r.error === "not_found") {
+      setRoom((prev) => ({ ...prev, status: "ended" }));
+    }
+    await refresh();
+  };
   const { tracker, channelState } = useRoomChannel({
     code: room.code,
     role: "player",
@@ -199,6 +214,9 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
     seatIds,
     onRoom,
     onRemoved,
+    onState: setGame,
+    onAnswered,
+    onSubscribed: () => void resync(),
   });
 
   if (removed || room.status === "ended") {
@@ -216,6 +234,30 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
 
   const me = room.seats.find((s) => s.id === initial.mySeatId);
   const hostStatus = tracker.statuses.host ?? "offline";
+
+  if (game && game.phase !== "lobby" && initial.mySeatId) {
+    return (
+      <div className="flex flex-1 flex-col gap-3" data-testid="player-game">
+        <ConnToasts tracker={tracker} seats={room.seats} />
+        <SelfConnBanner state={channelState} />
+        <span className="inline-flex items-center gap-2 self-end text-sm font-semibold" data-testid="host-status" data-status={hostStatus}>
+          {tconn("host")}
+          <ConnBadge status={hostStatus} />
+        </span>
+        <PhoneTrivia
+          game={game}
+          mySeatId={initial.mySeatId}
+          offset={offset}
+          onAnswer={async (index, choice) => {
+            const r = await gameApi.answer(room.code, { index, choice, answeredAt: Date.now() + offset });
+            if (r.ok) setGame(r.game);
+            return r.ok || r.error === "already_answered";
+          }}
+          onTimeUp={() => void gameApi.command(room.code, { action: "timeup", index: game.index }).then((r) => r.ok && setGame(r.game))}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-4" data-testid="player-lobby">

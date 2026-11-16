@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { roomsApi } from "@/lib/rooms/client";
 import QRCode from "qrcode";
 import { useLocale, useTranslations } from "next-intl";
 import { Kassa } from "@/components/Kassa";
@@ -9,8 +10,11 @@ import { WeddingLights } from "@/components/WeddingLights";
 import { formatNumber, roomCode } from "@/lib/i18n/digits";
 import { useRoomChannel } from "@/lib/realtime/useRoomChannel";
 import { ROOM_GAMES, type RoomErrorCode, type RoomGame, type RoomMood, type RoomView } from "@/lib/rooms/api";
-import { roomsApi } from "@/lib/rooms/client";
 import { MoodPicker } from "./MoodPicker";
+import { HostTrivia } from "@/components/trivia/HostTrivia";
+import type { GameErrorCode } from "@/lib/rooms/game";
+import { gameApi } from "@/lib/rooms/client";
+import { useRoomGame } from "@/lib/rooms/useRoomGame";
 import { ConnToasts, PlayerList, SelfConnBanner } from "./Presence";
 
 /** TV / laptop host screen: QR + code, live roster with connection status, game and mood. */
@@ -29,6 +33,13 @@ export function HostLobby({ code }: { code: string }) {
   const [qr, setQr] = useState<string>("");
   const [joinUrl, setJoinUrl] = useState("");
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [gameError, setGameError] = useState<GameErrorCode | null>(null);
+  const [count, setCount] = useState<5 | 10 | 15>(10);
+  const [difficulty, setDifficulty] = useState<"easy" | "mixed" | "hard">("mixed");
+  const { game, setGame, onAnswered, offset, refresh } = useRoomGame(code);
+  const tt = useTranslations("teams");
+  const ts = useTranslations("setup");
 
   useEffect(() => {
     let alive = true;
@@ -56,7 +67,30 @@ export function HostLobby({ code }: { code: string }) {
     seatId: null,
     seatIds,
     onRoom,
+    onState: setGame,
+    onAnswered,
+    // Catch up on anything missed while not subscribed.
+    onSubscribed: () => {
+      void roomsApi.get(code).then((r) => r.ok && setRoom(r.room));
+      void refresh();
+    },
   });
+
+  // (The React Compiler memoizes these; no manual useCallback needed.)
+  const command = async (cmd: Parameters<typeof gameApi.command>[1]) => {
+    setBusy(true);
+    setGameError(null);
+    const r = await gameApi.command(code, cmd);
+    setBusy(false);
+    if (r.ok) setGame(r.game);
+    else if (r.error !== "too_early" && r.error !== "conflict") setGameError(r.error);
+    return r;
+  };
+
+  const refreshRoom = async () => {
+    const r = await roomsApi.get(code);
+    if (r.ok) setRoom(r.room);
+  };
 
   const act = async (action: Parameters<typeof roomsApi.host>[1]) => {
     const r = await roomsApi.host(code, action);
@@ -108,8 +142,32 @@ export function HostLobby({ code }: { code: string }) {
     );
   }
 
-  const count = formatNumber(room.seats.length, locale);
+  if (game && game.phase !== "lobby") {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <WeddingLights variant="wide" />
+        <ConnToasts tracker={tracker} seats={room.seats} large />
+        <div className="px-10">
+          <SelfConnBanner state={channelState} />
+        </div>
+        <HostTrivia
+          game={game}
+          seats={room.seats}
+          tracker={tracker}
+          offset={offset}
+          busy={busy}
+          onAdvance={() => void command({ action: "advance" })}
+          onTimeUp={() => void command({ action: "timeup", index: game.index })}
+          onLobby={() => void command({ action: "lobby" })}
+          onEnd={() => void act({ action: "end" })}
+        />
+      </div>
+    );
+  }
+
+  const playerCount = formatNumber(room.seats.length, locale);
   const displayCode = roomCode(room.code);
+  const canStart = room.game === "trivia_team" && room.seats.length >= 2;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -150,7 +208,7 @@ export function HostLobby({ code }: { code: string }) {
 
           <div className="flex flex-col gap-3">
             <div className="flex items-baseline justify-between gap-4">
-              <h2 className="display-text text-4xl">{t("players", { count })}</h2>
+              <h2 className="display-text text-4xl">{t("players", { count: playerCount })}</h2>
               <p className="text-lg text-muted">{tconn("fairPlay")}</p>
             </div>
             {room.seats.length ? (
@@ -160,6 +218,26 @@ export function HostLobby({ code }: { code: string }) {
                 showIncidents
                 large
                 onRemove={(s) => void act({ action: "remove", seatId: s.id })}
+                renderExtra={
+                  room.game === "trivia_team"
+                    ? (s) => (
+                        <button
+                          type="button"
+                          data-testid={`team-toggle-${s.name}`}
+                          aria-label={`${t("teamTap")}: ${s.name}`}
+                          onClick={async () => {
+                            await command({ action: "team", seatId: s.id, team: s.team === 1 ? 2 : 1 });
+                            await refreshRoom();
+                          }}
+                          className={`min-h-11 rounded-full ink-border px-3 text-lg font-bold ${
+                            s.team === 1 ? "bg-tomato text-cream" : s.team === 2 ? "bg-chair text-ink" : "bg-cream text-muted"
+                          }`}
+                        >
+                          {s.team ? tt(`short${s.team}`) : "?"}
+                        </button>
+                      )
+                    : undefined
+                }
               />
             ) : (
               <p className="rounded-[20px] ink-border bg-paper p-6 text-2xl">{tl("noPlayers")}</p>
@@ -191,8 +269,58 @@ export function HostLobby({ code }: { code: string }) {
             <MoodPicker mood={room.mood} onChange={onMood} error={moodError} />
           </div>
 
+          {room.game === "trivia_team" && (
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="display-text text-2xl">{t("settings")}</span>
+              {([5, 10, 15] as const).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  aria-pressed={count === n}
+                  onClick={() => setCount(n)}
+                  className={`min-h-11 rounded-full px-4 text-lg font-bold ${count === n ? "bg-sunflower ink-border-thick" : "bg-paper ink-border"}`}
+                >
+                  {t("count", { count: formatNumber(n, locale) })}
+                </button>
+              ))}
+              {(["easy", "mixed", "hard"] as const).map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  aria-pressed={difficulty === d}
+                  onClick={() => setDifficulty(d)}
+                  className={`min-h-11 rounded-full px-4 text-lg font-bold ${difficulty === d ? "bg-sunflower ink-border-thick" : "bg-paper ink-border"}`}
+                >
+                  {ts(d === "easy" ? "diffEasy" : d === "mixed" ? "diffMixed" : "diffHard")}
+                </button>
+              ))}
+              <Button
+                tone="paper"
+                size="md"
+                onClick={async () => {
+                  await command({ action: "balance" });
+                  await refreshRoom();
+                }}
+              >
+                {t("balance")}
+              </Button>
+            </div>
+          )}
+          {gameError && (
+            <p role="alert" className="text-xl font-bold text-tomato">
+              {t(`errors.${gameError === "need_two_teams" || gameError === "no_questions" ? gameError : "generic"}`)}
+            </p>
+          )}
+
           <div className="mt-auto flex items-center gap-4">
-            <Button tone="tomato" size="xl" className="flex-1" disabled title={t("startSoon")}>
+            <Button
+              tone="tomato"
+              size="xl"
+              className="flex-1"
+              disabled={!canStart || busy}
+              onClick={() => void command({ action: "start", count, difficulty, locale: locale === "en" ? "en" : "ar" })}
+              data-testid="host-start"
+            >
               {t("start")}
             </Button>
             {confirmEnd ? (
@@ -210,7 +338,8 @@ export function HostLobby({ code }: { code: string }) {
               </Button>
             )}
           </div>
-          <p className="text-lg text-muted">{t("startSoon")}</p>
+          {room.game !== "trivia_team" && <p className="text-lg text-muted">{t("startSoon")}</p>}
+          {room.game === "trivia_team" && room.seats.length < 2 && <p className="text-lg text-muted">{t("needPlayers")}</p>}
         </section>
       </div>
     </div>

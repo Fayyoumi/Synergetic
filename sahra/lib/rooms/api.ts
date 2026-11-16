@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { AVATAR_COLOURS } from "@/lib/profile/api";
+import type { TeamPublicView } from "./game";
 
 /** Room HTTP API contract, shared by client and server. */
 
@@ -73,6 +74,10 @@ export const seatTopic = (code: string, seatId: string) => `room:${code}:p:${sea
 export const roomBroadcast = z.discriminatedUnion("type", [
   z.object({ v: z.literal(1), type: z.literal("room"), room: z.custom<Omit<RoomView, "role" | "mySeatId">>() }),
   z.object({ v: z.literal(1), type: z.literal("removed"), seatId: z.string() }),
+  /** Full public game state after every change. */
+  z.object({ v: z.literal(1), type: z.literal("state"), game: z.custom<TeamPublicView>((x) => typeof x === "object" && x !== null) }),
+  /** A seat answered the current question (who, never what). */
+  z.object({ v: z.literal(1), type: z.literal("answered"), seatId: z.string(), index: z.number() }),
 ]);
 export type RoomBroadcast = z.infer<typeof roomBroadcast>;
 

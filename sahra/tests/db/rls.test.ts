@@ -145,7 +145,7 @@ describe.skipIf(!TEST_DATABASE_URL)("database: migrations + RLS", () => {
       expect(await as(db, C, async () => (await db.query("select * from room_players")).rowCount)).toBe(2);
       await db.query("insert into auth.users (id) values ('00000000-0000-0000-0000-0000000000ee')");
       expect(
-        await as(db, "00000000-0000-0000-0000-0000000000ee", async () => (await db.query("select * from rooms")).rowCount),
+        await as(db, "00000000-0000-0000-0000-0000000000ee", async () => (await db.query("select id from rooms")).rowCount),
       ).toBe(0);
     });
 
