@@ -33,6 +33,24 @@ export function buildSeedSql(content: SeedContent): string {
       `insert into public.traits (id, lang, text, mood_min, banned, status) values (${lit(t.id)}, ${lit(t.lang)}, ${lit(t.text)}, ${lit(t.mood_min)}::public.mood, ${t.banned}, ${lit(t.status)}::public.content_status) on conflict (id) do update set lang = excluded.lang, text = excluded.text, mood_min = excluded.mood_min, banned = excluded.banned, ${keepStatus("traits")};`,
     );
   }
+  for (const line of kassaRows(content)) {
+    out.push(
+      `insert into public.kassa_lines (id, lang, event, mood, text, status) values (${lit(line.id)}, ${lit(line.lang)}, ${lit(line.event)}, ${lit(line.mood)}::public.mood, ${lit(line.text)}, ${lit(line.status)}::public.content_status) on conflict (id) do update set text = excluded.text, updated_at = now(), ${keepStatus("kassa_lines")};`,
+    );
+  }
   out.push("commit;", "");
   return out.join("\n");
+}
+
+/** Kassa's lines as rows: id = "event:mood:n". */
+export function kassaRows(content: SeedContent) {
+  const rows: { id: string; lang: "ar" | "en"; event: string; mood: string; text: string; status: string }[] = [];
+  for (const file of Object.values(content.kassa)) {
+    for (const [event, moods] of Object.entries(file.events)) {
+      for (const [mood, lines] of Object.entries(moods ?? {})) {
+        (lines ?? []).forEach((text, i) => rows.push({ id: `${event}:${mood}:${i}`, lang: file.lang, event, mood, text, status: file.status }));
+      }
+    }
+  }
+  return rows;
 }

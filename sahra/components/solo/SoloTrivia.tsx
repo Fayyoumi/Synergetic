@@ -95,11 +95,11 @@ export function SoloTrivia({ mode }: { mode: Mode }) {
   }, [mode, apply]);
 
   const start = useCallback(
-    (choice: SetupChoice) => {
+    (choice: SetupChoice, again = false) => {
       setLastChoice(choice);
       setShowResults(false);
       setNotice(null);
-      void call({ action: "start", mode, locale, ...choice });
+      void call({ action: "start", mode, locale, ...choice, again });
     },
     [call, mode, locale],
   );
@@ -162,7 +162,7 @@ export function SoloTrivia({ mode }: { mode: Mode }) {
         summary={view.summary}
         mode={mode}
         total={view.question?.total ?? null}
-        onAgain={mode === "daily" ? null : () => (lastChoice ? start(lastChoice) : (setView(null), setShowResults(false)))}
+        onAgain={mode === "daily" ? null : () => (lastChoice ? start({ ...lastChoice, questionIds: undefined }, true) : (setView(null), setShowResults(false)))}
       />
     );
   } else if (view && playing) {

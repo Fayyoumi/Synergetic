@@ -10,9 +10,11 @@ import type { Seat } from "@/lib/rooms/api";
 import type { CharadesPublicView, SecretView } from "@/lib/rooms/game";
 import { useQuestionCountdown } from "@/lib/rooms/useRoomGame";
 import { CharadesScores, TurnLog, turnPoints } from "./CharadesParts";
+import { ShareButton } from "@/components/share/ShareButton";
 
 type Props = {
   game: CharadesPublicView;
+  code: string;
   mySeatId: string;
   seats: Seat[];
   secret: SecretView | null;
@@ -25,8 +27,9 @@ type Props = {
 const difficultyTone = { 1: "paper", 2: "chair", 3: "tomato" } as const;
 
 /** Phone controller for charades. Only the actor's phone shows the word. */
-export function PhoneCharades({ game, mySeatId, seats, secret, offset, busy, onCommand, onTimeUp }: Props) {
+export function PhoneCharades({ game, code, mySeatId, seats, secret, offset, busy, onCommand, onTimeUp }: Props) {
   const t = useTranslations("charades");
+  const tp = useTranslations("play");
   const tt = useTranslations("teams");
   const locale = useLocale();
   const fmt = (n: number) => formatNumber(n, locale);
@@ -149,6 +152,20 @@ export function PhoneCharades({ game, mySeatId, seats, secret, offset, busy, onC
             </h2>
           </div>
           {myTeam && <p className="text-lg font-bold">{t("yourPoints", { points: fmt(game.teamScores[myTeam]) })}</p>}
+          {myTeam && (
+            <ShareButton
+              what="charades_result"
+              roomCode={code}
+              card={{
+                kind: "result",
+                heading: tp("games.charades.name"),
+                label: tt(String(myTeam)),
+                value: fmt(game.teamScores[myTeam]),
+                lines: [game.final?.winner ? tt("wins", { team: tt(String(game.final.winner)) }) : tt("tie")],
+                badges: [],
+              }}
+            />
+          )}
         </div>
       )}
     </div>

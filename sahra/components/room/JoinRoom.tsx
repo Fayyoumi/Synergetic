@@ -285,6 +285,7 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
         ) : game.kind === "charades" ? (
           <PhoneCharades
             game={game}
+            code={room.code}
             mySeatId={initial.mySeatId}
             seats={room.seats}
             secret={secret}
@@ -303,6 +304,7 @@ function PlayerLobby({ initial }: { initial: RoomView }) {
         ) : (
         <PhoneTrivia
           game={game}
+          code={room.code}
           mySeatId={initial.mySeatId}
           offset={offset}
           onAnswer={async (index, choice) => {

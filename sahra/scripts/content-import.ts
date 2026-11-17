@@ -5,14 +5,14 @@
  *   npm run content:sql     write supabase/seed.sql (paste into the SQL editor, or used by `supabase db reset`)
  *   npm run content:import  upsert into the project in NEXT_PUBLIC_SUPABASE_URL using SUPABASE_SERVICE_ROLE_KEY
  *
- * Kassa lines and the blocklist stay as JSON files read by the app; they are validated here too.
+ * Kassa's lines are imported into kassa_lines (approved in the admin); the blocklist stays a JSON file.
  * Re-importing never downgrades content that an admin already approved.
  */
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { loadSeedContent } from "../lib/content/load";
-import { buildSeedSql } from "../lib/content/seedSql";
+import { buildSeedSql, kassaRows } from "../lib/content/seedSql";
 
 async function main() {
   const mode = process.argv.includes("--check") ? "check" : process.argv.includes("--sql") ? "sql" : "import";
@@ -71,6 +71,7 @@ async function main() {
     await mergeStatus("traits", (r) => r.id, "id", content.traits.map((t) => ({ id: t.id, lang: t.lang, text: t.text, mood_min: t.mood_min, banned: t.banned, status: t.status }))),
     "id",
   );
+  await upsert("kassa_lines", await mergeStatus("kassa_lines", (r) => r.id, "id", kassaRows(content)), "id");
   console.log("Import finished.");
 }
 

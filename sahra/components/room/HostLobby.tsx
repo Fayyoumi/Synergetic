@@ -11,6 +11,7 @@ import { formatNumber, roomCode } from "@/lib/i18n/digits";
 import { useRoomChannel } from "@/lib/realtime/useRoomChannel";
 import { ROOM_GAMES, type RoomErrorCode, type RoomGame, type RoomMood, type RoomView } from "@/lib/rooms/api";
 import { MoodPicker } from "./MoodPicker";
+import { HostNightSummary } from "./NightSummary";
 import { HostTrivia } from "@/components/trivia/HostTrivia";
 import { HostCharades } from "@/components/charades/HostCharades";
 import { HostWho } from "@/components/who/HostWho";
@@ -132,17 +133,7 @@ export function HostLobby({ code }: { code: string }) {
   }
   if (!room) return <p className="p-10 text-center text-2xl text-muted">{tc("loading")}</p>;
 
-  if (room.status === "ended") {
-    return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-6 p-10 text-center">
-        <Kassa mood="laughing" size={180} label={tc("kassa")} />
-        <p className="display-text text-5xl">{tl("endedTitle")}</p>
-        <ButtonLink href="/" tone="sunflower" size="xl">
-          {tl("backHome")}
-        </ButtonLink>
-      </div>
-    );
-  }
+  if (room.status === "ended") return <HostNightSummary code={room.code} />;
 
   if (game && game.phase !== "lobby") {
     return (

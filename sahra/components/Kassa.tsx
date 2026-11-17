@@ -118,3 +118,33 @@ export function Kassa({ mood = "cheeky", size = 120, label, className }: Props) 
     </svg>
   );
 }
+
+/**
+ * The same artwork as a standalone SVG string (for drawing Kassa onto a canvas,
+ * e.g. in share images). Keep in sync with the component above.
+ */
+export function kassaSvgString(mood: KassaExpression = "cheeky"): string {
+  const face = faces[mood];
+  const mouth =
+    face.mouth.kind === "fill"
+      ? `<path d="${face.mouth.d}" fill="${INK}"/>`
+      : face.mouth.kind === "stroke"
+        ? `<path d="${face.mouth.d}" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>`
+        : `<ellipse cx="${face.mouth.cx}" cy="${face.mouth.cy}" rx="${face.mouth.rx}" ry="${face.mouth.ry}" fill="${INK}"/>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="400" height="480">
+<defs><clipPath id="g"><path d="${GLASS}"/></clipPath></defs>
+<g fill="none" stroke="${INK}" stroke-width="5" stroke-linecap="round"><path d="M85 44 C75 34 95 24 85 12"/><path d="M100 44 C90 31 110 21 100 6"/><path d="M115 44 C105 34 125 24 115 12"/></g>
+<ellipse cx="100" cy="214" rx="72" ry="14" fill="#12A6A0" stroke="${INK}" stroke-width="5"/>
+<path d="${GLASS}" fill="#FFFDF7"/>
+<rect x="40" y="92" width="120" height="120" fill="#D9541E" clip-path="url(#g)"/>
+<path d="${GLASS}" fill="none" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>
+<ellipse cx="100" cy="60" rx="40" ry="8" fill="#FFFDF7" stroke="${INK}" stroke-width="5"/>
+<path d="M72 76 C69 92 73 104 71 116" stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round"/>
+<circle cx="86" cy="124" r="10" fill="#FFFFFF" stroke="${INK}" stroke-width="4"/><circle cx="114" cy="124" r="10" fill="#FFFFFF" stroke="${INK}" stroke-width="4"/>
+<circle cx="${face.pupils.left[0]}" cy="${face.pupils.left[1]}" r="${face.pupils.r}" fill="${INK}"/><circle cx="${face.pupils.right[0]}" cy="${face.pupils.right[1]}" r="${face.pupils.r}" fill="${INK}"/>
+<path d="${face.browLeft}" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="${face.browRight}" stroke="${INK}" stroke-width="5" fill="none" stroke-linecap="round"/>
+<path d="M84 142 Q92 135 100 141 Q108 135 116 142 Q108 147 100 144 Q92 147 84 142 Z" fill="${INK}"/>
+${mouth}
+</svg>`;
+}

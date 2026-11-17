@@ -158,6 +158,7 @@ export class SoloService {
       throw inserted.error;
     }
     void logEvent("game_started", { type: GAME_TYPE[mode], settings }, { profileId: this.userId });
+    if (req.again) void logEvent("play_again_clicked", { type: GAME_TYPE[mode] }, { profileId: this.userId });
     return this.view({ ...state }, false, inserted.data.id);
   }
 

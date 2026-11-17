@@ -9,11 +9,14 @@ import type { Team } from "@/lib/game/teamTrivia";
 import { formatNumber } from "@/lib/i18n/digits";
 import type { TeamPublicView } from "@/lib/rooms/game";
 import { useQuestionCountdown } from "@/lib/rooms/useRoomGame";
+import { ShareButton } from "@/components/share/ShareButton";
 
 const teamBg: Record<Team, string> = { 1: "bg-tomato text-cream", 2: "bg-chair text-ink" };
 
 type Props = {
   game: TeamPublicView;
+  /** Room code (for share analytics). */
+  code: string;
   mySeatId: string;
   offset: number;
   onAnswer: (index: number, choice: number) => Promise<boolean>;
@@ -162,10 +165,12 @@ function PhoneScoreboard({ game, mySeatId }: Props) {
   );
 }
 
-function PhoneFinal({ game, mySeatId }: Props) {
+function PhoneFinal({ game, mySeatId, code }: Props) {
   const t = useTranslations("trivia");
   const tt = useTranslations("teams");
   const tb = useTranslations("badges");
+  const tp = useTranslations("play");
+  const ts = useTranslations("share");
   const locale = useLocale();
   const fmt = (n: number) => formatNumber(n, locale);
   const mine = game.final?.standings.find((s) => s.seatId === mySeatId);
@@ -195,6 +200,18 @@ function PhoneFinal({ game, mySeatId }: Props) {
               ))}
             </ul>
           )}
+          <ShareButton
+            what="team_result"
+            roomCode={code}
+            card={{
+              kind: "result",
+              heading: tp("games.teamTrivia.name"),
+              label: ts("resultLabel"),
+              value: fmt(mine.points),
+              lines: [winner === null ? tt("tie") : tt("wins", { team: tt(String(winner)) }), t("yourTeam", { team: tt(String(mine.team)) })],
+              badges: mine.badges.map((b) => tb(b)),
+            }}
+          />
         </div>
       )}
     </div>

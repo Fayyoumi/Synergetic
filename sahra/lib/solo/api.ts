@@ -18,6 +18,8 @@ export const soloRequest = z.discriminatedUnion("action", [
      * exact). The server re-checks every id and rebuilds the round if any is invalid.
      */
     questionIds: z.array(z.string().max(40)).max(50).optional(),
+    /** Started from "play again" on the results screen (analytics). */
+    again: z.boolean().default(false),
   }),
   z.object({ action: z.literal("state"), gameId: z.uuid() }),
   z.object({

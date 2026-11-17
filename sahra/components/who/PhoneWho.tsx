@@ -11,6 +11,7 @@ import type { SecretView, WhoPublicView } from "@/lib/rooms/game";
 import { useQuestionCountdown } from "@/lib/rooms/useRoomGame";
 import { PromptFlow } from "./PromptFlow";
 import { VoteBars } from "./VoteBars";
+import { ShareButton } from "@/components/share/ShareButton";
 
 type Props = {
   code: string;
@@ -28,6 +29,7 @@ type Props = {
 export function PhoneWho({ code, game, mySeatId, seats, secret, offset, onVote, onVeto, onTimeUp }: Props) {
   const t = useTranslations("who");
   const tr = useTranslations("trivia");
+  const ts = useTranslations("share");
   const locale = useLocale();
   const fmt = (n: number) => formatNumber(n, locale);
   const nameOf = (id: string) => seats.find((s) => s.id === id)?.name ?? "?";
@@ -57,9 +59,17 @@ export function PhoneWho({ code, game, mySeatId, seats, secret, offset, onVote, 
         </div>
         <p className="display-text text-3xl">{t("yourPoints", { points: fmt(game.scores[mySeatId] ?? 0) })}</p>
         {mineTitles.map((x, i) => (
-          <p key={i} className="rounded-[18px] ink-border-thick bg-sunflower px-4 py-3 text-lg font-bold">
-            {x.title}
-          </p>
+          <div key={i} className="flex flex-col gap-2 rounded-[18px] ink-border-thick bg-sunflower px-4 py-3">
+            <p className="text-lg font-bold">{x.title}</p>
+            <ShareButton
+              what="title"
+              roomCode={code}
+              size="md"
+              label={ts("titleButton")}
+              testId={`share-title-${i}`}
+              card={{ kind: "title", heading: ts("titleHeading"), title: x.title, name: nameOf(mySeatId) }}
+            />
+          </div>
         ))}
       </div>
     );

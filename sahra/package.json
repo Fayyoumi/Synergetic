@@ -18,7 +18,8 @@
     "ci": "npm run lint && npm run typecheck && npm run content:check && npm run test && npm run build",
     "db:start": "supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,storage-api,postgres-meta,mailpit && bash scripts/local-env.sh",
     "db:stop": "supabase stop",
-    "db:reset": "supabase db reset"
+    "db:reset": "supabase db reset",
+    "admin:make": "tsx --env-file-if-exists=.env.local scripts/make-admin.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

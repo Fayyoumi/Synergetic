@@ -178,9 +178,17 @@ export class RoomService {
       case "end": {
         await this.db.from("rooms").update({ status: "ended" }).eq("id", room.id);
         const seats = await this.seats(room.id);
+        const [{ data: created }, { count: games }] = await Promise.all([
+          this.db.from("rooms").select("created_at").eq("id", room.id).single<{ created_at: string }>(),
+          this.db.from("games").select("id", { count: "exact", head: true }).eq("room_id", room.id),
+        ]);
         void logEvent(
           "room_ended",
-          { players: seats.length, total_duration_sec: null, games_played: 0 },
+          {
+            players: seats.length,
+            total_duration_sec: created ? Math.round((Date.now() - Date.parse(created.created_at)) / 1000) : null,
+            games_played: games ?? 0,
+          },
           { profileId: this.userId, roomId: room.id },
         );
         break;
