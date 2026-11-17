@@ -43,7 +43,9 @@ export function JoinRoom({ code }: { code: string }) {
     };
   }, [code]);
 
-  if (loading) return <p className="py-10 text-center text-muted">{tc("loading")}</p>;
+  // The join form renders on the server straight away (fast first paint on a freshly scanned QR);
+  // the room check swaps it for the lobby (already seated) or an error when it comes back.
+  if (loading) return <JoinForm code={code} onJoined={setRoom} checking />;
   if (room && room.mySeatId && room.status !== "ended") return <PlayerLobby initial={room} />;
   if (error && error !== "consent_required") {
     return (
@@ -64,7 +66,7 @@ export function JoinRoom({ code }: { code: string }) {
   return <JoinForm code={code} onJoined={setRoom} />;
 }
 
-function JoinForm({ code, onJoined }: { code: string; onJoined: (room: RoomView) => void }) {
+function JoinForm({ code, onJoined, checking = false }: { code: string; onJoined: (room: RoomView) => void; checking?: boolean }) {
   const t = useTranslations("join");
   const locale = useLocale();
   const [name, setName] = useState("");
@@ -80,7 +82,7 @@ function JoinForm({ code, onJoined }: { code: string; onJoined: (room: RoomView)
     void fetchProfile().then((r) => {
       if (!alive) return;
       if (r.ok) {
-        if (r.profile.displayName) setName(r.profile.displayName.slice(0, 24));
+        if (r.profile.displayName) setName((typed) => typed || r.profile.displayName!.slice(0, 24));
         setColour(r.profile.avatarColor);
       }
       if (hasConsented()) {
@@ -172,7 +174,7 @@ function JoinForm({ code, onJoined }: { code: string; onJoined: (room: RoomView)
         </p>
       )}
       <div className="mt-auto">
-        <Button type="submit" tone="tomato" size="xl" block disabled={busy || !name.trim()}>
+        <Button type="submit" tone="tomato" size="xl" block disabled={busy || checking || !name.trim()}>
           {t("submit")}
         </Button>
       </div>

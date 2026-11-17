@@ -79,10 +79,6 @@ export function TriviaSetup({
       return cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c];
     });
 
-  if (!catalog) {
-    return <p className="py-10 text-center text-muted">{tCommon("loading")}</p>;
-  }
-
   const range = (d: RoundDifficulty) => {
     const bases = DIFFICULTY_FILTER[d].map((x) => BASE_POINTS[x]);
     return t("range", { min: fmt(Math.min(...bases)), max: fmt(Math.max(...bases)) });
@@ -97,6 +93,8 @@ export function TriviaSetup({
           <span className="font-bold">{t("categories")}</span>{" "}
           <span className="text-muted">{t("selectedCount", { count: fmt(categories.length) })}</span>
         </h2>
+        {/* The rest of the screen renders on the server; only the categories wait for the catalog. */}
+        {!catalog && <p className="text-muted">{tCommon("loading")}</p>}
         <div className="flex flex-wrap gap-2">
           {available.map((c) => (
             <ToggleChip key={c} pressed={categories.includes(c)} onClick={() => toggle(c)}>
@@ -104,7 +102,7 @@ export function TriviaSetup({
             </ToggleChip>
           ))}
         </div>
-        {categories.length === 0 && (
+        {catalog && categories.length === 0 && (
           <p role="alert" className="font-semibold text-tomato">
             {t("pickOne")}
           </p>
@@ -143,14 +141,14 @@ export function TriviaSetup({
         <div className="flex items-center justify-between">
           <span>{t("questionCount")}</span>
           <span className="display-text text-2xl" data-testid="setup-count">
-            {mode === "sudden" ? t("untilWrong") : fmt(count)}
+            {mode === "sudden" ? t("untilWrong") : catalog ? fmt(count) : "…"}
           </span>
         </div>
         {mode === "classic" && (
           <div className="flex items-center justify-between">
             <span>{t("maxScore")}</span>
             <span className="display-text text-3xl text-sunflower" data-testid="setup-max">
-              {fmt(max)}
+              {catalog ? fmt(max) : "…"}
             </span>
           </div>
         )}

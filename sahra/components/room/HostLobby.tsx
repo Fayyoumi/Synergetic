@@ -1,6 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useKassa } from "@/lib/kassa/useKassa";
+import { playSound } from "@/lib/sound";
+import { SoundToggle } from "@/components/SoundToggle";
 import { roomsApi } from "@/lib/rooms/client";
 import QRCode from "qrcode";
 import { useLocale, useTranslations } from "next-intl";
@@ -61,6 +64,15 @@ export function HostLobby({ code }: { code: string }) {
       alive = false;
     };
   }, [code]);
+
+  const say = useKassa();
+  // A soft chime whenever someone new sits down.
+  const seatCount = room?.seats.length ?? 0;
+  const lastCount = useRef(seatCount);
+  useEffect(() => {
+    if (seatCount > lastCount.current) playSound("join");
+    lastCount.current = seatCount;
+  }, [seatCount]);
 
   const seatIds = useMemo(() => room?.seats.map((s) => s.id) ?? [], [room]);
   const onRoom = useCallback((r: Omit<RoomView, "role" | "mySeatId">) => setRoom((prev) => (prev ? { ...prev, ...r } : prev)), []);
@@ -140,11 +152,15 @@ export function HostLobby({ code }: { code: string }) {
       <div className="flex min-h-screen flex-col">
         <WeddingLights variant="wide" />
         <ConnToasts tracker={tracker} seats={room.seats} large />
-        <div className="px-10">
-          <SelfConnBanner state={channelState} />
+        <div className="flex items-center gap-4 px-10">
+          <div className="flex-1">
+            <SelfConnBanner state={channelState} />
+          </div>
+          <SoundToggle large />
         </div>
         {game.kind === "who_among_us" ? (
           <HostWho
+            mood={room.mood}
             game={game}
             seats={room.seats}
             tracker={tracker}
@@ -156,6 +172,7 @@ export function HostLobby({ code }: { code: string }) {
           />
         ) : game.kind === "charades" ? (
           <HostCharades
+            mood={room.mood}
             game={game}
             seats={room.seats}
             tracker={tracker}
@@ -167,6 +184,7 @@ export function HostLobby({ code }: { code: string }) {
           />
         ) : (
           <HostTrivia
+            mood={room.mood}
             game={game}
             seats={room.seats}
             tracker={tracker}
@@ -220,9 +238,16 @@ export function HostLobby({ code }: { code: string }) {
         <section className="flex min-w-0 flex-col gap-6">
           <div className="flex items-end gap-4">
             <Kassa mood="cheeky" size={130} label={tc("kassa")} className="shrink-0" />
-            <SpeechBubble className="text-2xl">{t("kassaWelcome")}</SpeechBubble>
+            <SpeechBubble className="text-2xl">
+              {say("lobby_welcome", room.mood, room.seats.length, { name: room.seats[room.seats.length - 1]?.name })}
+            </SpeechBubble>
           </div>
-          <SelfConnBanner state={channelState} />
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <SelfConnBanner state={channelState} />
+            </div>
+            <SoundToggle large />
+          </div>
 
           <div className="flex flex-col gap-3">
             <div className="flex items-baseline justify-between gap-4">

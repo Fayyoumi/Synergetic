@@ -349,7 +349,6 @@
     "endConfirm": "Sure you want to end the night?",
     "notHost": "This isn't your sahra. Join as a player?",
     "joinInstead": "Join as a player",
-    "kassaWelcome": "Welcome everyone! Scan the code and let's play.",
     "games": {
       "trivia_team": "Team Trivia",
       "charades": "Charades",
@@ -494,8 +493,6 @@
     "vetoed": "The author asked to skip this reveal.",
     "reveal": "Result",
     "votes": "{n, plural, one {{count} vote} other {{count} votes}}",
-    "kassaWinner": "{name}, the people have spoken!",
-    "kassaTie": "A tie! {names}",
     "noVotes": "Nobody voted!",
     "titleWon": "Round title: {title}",
     "authorWas": "It was {name}!",
@@ -614,5 +611,63 @@
     "no": "No",
     "na": "—",
     "metricsNote": "Days are Amman days. Day-7 return for the last week isn't complete yet."
+  },
+  "sound": {
+    "mute": "Mute sound",
+    "unmute": "Turn sound on"
+  },
+  "kassaSays": {
+    "lobby_welcome": {
+      "named": "Welcome {name}! The night just got better.",
+      "plain": "Welcome everyone! Scan the code and let's play."
+    },
+    "game_start": {
+      "named": "Here we go, {name}!",
+      "plain": "Let's go! Good luck, everyone."
+    },
+    "correct": {
+      "named": "Well done {name}! That's right.",
+      "plain": "Correct! Well done."
+    },
+    "wrong": {
+      "named": "Close, {name}! You'll get the next one.",
+      "plain": "Close! You'll get the next one."
+    },
+    "timeout": {
+      "named": "Time's up, {name}. No worries.",
+      "plain": "Time's up! Faster on the next one."
+    },
+    "streak_3": {
+      "named": "Three in a row! {name} is on fire.",
+      "plain": "Three in a row! Keep it up."
+    },
+    "perfect_round": {
+      "named": "All correct! {name} wins the round.",
+      "plain": "A perfect round, not one mistake!"
+    },
+    "final_winner": {
+      "named": "Congratulations {name}! Star of the night.",
+      "plain": "Game over! Thanks for playing."
+    },
+    "vote_reveal_winner": {
+      "named": "{name}, the people have spoken!",
+      "plain": "The people have spoken!"
+    },
+    "vote_reveal_tie": {
+      "named": "A tie! {name} isn't alone.",
+      "plain": "A tie! You couldn't decide."
+    },
+    "charades_got_it": {
+      "named": "Got it! {name} is a born actor.",
+      "plain": "Got it! Well done, team."
+    },
+    "charades_time_up": {
+      "named": "Time's up! Thanks, {name}.",
+      "plain": "Time's up! Over to the other team."
+    },
+    "charades_steal": {
+      "named": "Stolen! {name} was listening.",
+      "plain": "A successful steal!"
+    }
   }
 }

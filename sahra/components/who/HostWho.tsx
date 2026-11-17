@@ -11,6 +11,9 @@ import type { PresenceTracker } from "@/lib/realtime/presence";
 import type { Seat } from "@/lib/rooms/api";
 import type { WhoPublicView } from "@/lib/rooms/game";
 import { useQuestionCountdown } from "@/lib/rooms/useRoomGame";
+import { useKassa } from "@/lib/kassa/useKassa";
+import { playSound } from "@/lib/sound";
+import { useEffect } from "react";
 import { VoteBars } from "./VoteBars";
 
 type Props = {
@@ -22,10 +25,11 @@ type Props = {
   onCommand: (action: "advance" | "lobby") => void;
   onTimeUp: () => void;
   onEnd: () => void;
+  mood: "family" | "friends" | "roast";
 };
 
 /** Host screen for "Who among us?". */
-export function HostWho({ game, seats, tracker, offset, busy, onCommand, onTimeUp, onEnd }: Props) {
+export function HostWho({ game, seats, tracker, offset, busy, onCommand, onTimeUp, onEnd, mood }: Props) {
   const t = useTranslations("who");
   const th = useTranslations("host");
   const tr = useTranslations("trivia");
@@ -33,6 +37,14 @@ export function HostWho({ game, seats, tracker, offset, busy, onCommand, onTimeU
   const fmt = (n: number) => formatNumber(n, locale);
   const nameOf = (id: string) => seats.find((s) => s.id === id)?.name ?? "?";
   const seconds = useQuestionCountdown(game.startedAt, offset, game.phase === "vote_open", onTimeUp, game.voteSeconds);
+  const say = useKassa();
+  useEffect(() => {
+    if (game.phase === "vote_open" && seconds > 0 && seconds <= 5) playSound("tick");
+  }, [seconds, game.phase]);
+  const revealKey = game.phase === "reveal" ? game.index : null;
+  useEffect(() => {
+    if (revealKey !== null) playSound("reveal");
+  }, [revealKey]);
   const inGame = seats.filter((s) => game.players.includes(s.id));
 
   if (game.phase === "prompts_collect") {
@@ -41,6 +53,9 @@ export function HostWho({ game, seats, tracker, offset, busy, onCommand, onTimeU
         <div className="flex items-end gap-5">
           <Kassa mood="cheeky" size={140} />
           <div>
+            <p className="text-3xl font-semibold" data-testid="kassa-line">
+              {say("game_start", mood, "who")}
+            </p>
             <h2 className="display-text text-6xl">{t("collecting")}</h2>
             <p className="text-2xl">{t("collectingBody")}</p>
           </div>
@@ -170,11 +185,13 @@ export function HostWho({ game, seats, tracker, offset, busy, onCommand, onTimeU
             <div className="flex items-end gap-4">
               <Kassa mood={res.top.length ? "laughing" : "shocked"} size={110} />
               <SpeechBubble className="text-3xl">
-                {res.top.length === 0
-                  ? t("noVotes")
-                  : res.top.length === 1
-                    ? t("kassaWinner", { name: nameOf(res.top[0]) })
-                    : t("kassaTie", { names: res.top.map(nameOf).join(tr("listSeparator")) })}
+                <span data-testid="kassa-line">
+                  {res.top.length === 0
+                    ? t("noVotes")
+                    : res.top.length === 1
+                      ? say("vote_reveal_winner", mood, `${game.index}`, { name: nameOf(res.top[0]) })
+                      : say("vote_reveal_tie", mood, `${game.index}`, { name: res.top.map(nameOf).join(tr("listSeparator")) })}
+                </span>
               </SpeechBubble>
             </div>
             {res.title && (

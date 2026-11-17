@@ -47,7 +47,7 @@ async function startClassic(page: Page) {
   await page.goto("/play");
   await page.getByRole("link", { name: /فردي/ }).click();
   await page.getByRole("link", { name: /ليلة الأسئلة/ }).click();
-  await expect(page.getByTestId("setup-max")).toBeVisible();
+  await expect(page.getByTestId("setup-max")).not.toHaveText("…"); // the catalog has loaded
   const max = westernDigits((await page.getByTestId("setup-max").textContent())!);
   await page.getByRole("button", { name: "يلا نبدأ!" }).click();
   await expect(page.getByTestId("question-text")).toBeVisible();
@@ -119,7 +119,7 @@ test.describe("solo trivia", () => {
     test.slow();
     await startClassic(page);
     await expect(page.getByRole("timer")).toBeVisible();
-    await expect(page.getByText("خلص الوقت!")).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByTestId("reveal-card")).toContainText("خلص الوقت!", { timeout: 20_000 });
     await expect(page.getByTestId("score")).toHaveText("٠");
   });
 
@@ -230,6 +230,7 @@ test.describe("solo trivia", () => {
     await startClassic(page);
     await answer(page, true);
     await page.goto("/profile");
+    await expect(page.getByTestId("profile-games")).not.toHaveText("…"); // loaded (and hydrated)
     await page.getByLabel("الاسم").fill("كريم shit");
     await page.getByRole("button", { name: "احفظ" }).first().click();
     await expect(page.getByRole("status")).toContainText("خبينا كلمة");

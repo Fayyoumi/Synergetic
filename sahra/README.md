@@ -3,7 +3,23 @@
 Arabic-first party games for Arab gatherings, hosted by Kassa the tea glass.
 Next.js 16 + Supabase. Read `../CLAUDE.md` for conventions and `docs/SAHRA_SPEC.md` for the full spec.
 
-> Status: Milestone 7 (sharing, analytics, content admin). This README grows with each milestone.
+> Status: Milestone 8, ready for the pilot. Everything in the MVP is built: solo trivia (classic, daily, sudden death), team trivia, charades and "Who among us?" with secret prompts on a TV plus up to 12 phones; Kassa's lines; sounds; story images; the content admin and the pilot dashboard.
+
+## What's in it
+
+| Where | What |
+| --- | --- |
+| `/` | Home. `/en` is the English version of every page. |
+| `/play/solo` | Solo trivia: classic (5 questions), daily challenge, sudden death |
+| `/play/group` | Create a room on the TV: team trivia, charades, "Who among us?" |
+| `/join` and `/join/<code>` | Phones join by QR code or 4-digit code: no app, no account |
+| `/titles`, `/profile` | The titles you won, and your XP, streaks, badges and "delete my data" |
+| `/night/<code>` | After the night: the titles with share buttons |
+| `/admin`, `/admin/pilot` | Content review and the pilot numbers (admins only) |
+
+**Kassa's lines** come from `content/kassa.ar.json`. They're imported into the `kassa_lines` table as drafts, and Kassa says only the ones an admin approved, for the room's mood (and Family lines on any night). Until a line is approved, the screens use the built-in copy from `messages/*.json`. English screens always use the built-in copy.
+
+**Sounds** are made in the browser (WebAudio), so there are no sound files: a tick in the last 5 seconds, a ding for a right answer, a buzz for a wrong one, a fanfare at a reveal, and a pop when someone joins. Each screen has a mute button; the choice is remembered on that device.
 
 ### Try a room locally
 
@@ -86,12 +102,39 @@ npm run build && npm run test:e2e   # Playwright: phone and 1280x720 host viewpo
 npm run ci           # lint + typecheck + content check + tests + build
 ```
 
+`tests/e2e/pilot-night.spec.ts` plays a whole night in one room: 1 host screen and 3 phones play a full team-trivia game, go back to the lobby, switch to "Who among us?", play it to the end, and close the night. The other multi-device specs cover dropped phones, the charades secret word, vetoes and anti-cheat.
+
 The solo e2e tests play real games against the local Supabase, using the seed answers to answer right or wrong on purpose, and include anti-cheat checks (fake timestamps, double submissions, forged rounds, other players' games).
 
 GitHub Actions runs everything, including the database and e2e tests, from `.github/workflows/sahra-ci.yml`.
 
-## Deploy (Vercel Hobby)
+## Lighthouse (mobile, production build)
 
-1. Import the GitHub repo in Vercel and set **Root Directory** to `sahra`.
-2. Add the environment variables `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY`.
-3. In Supabase → Authentication → URL Configuration, set the Site URL to the Vercel domain and add it to the redirect URLs.
+Measured with `next start` and Lighthouse's default mobile throttling:
+
+| Page | Performance | Accessibility | Best practices |
+| --- | --- | --- | --- |
+| `/` | 91 | 100 | 100 |
+| `/play/trivia` | 91 | 100 | 100 |
+| `/join/<code>` | 92 | 100 | 96 |
+| `/profile` | 89 | 100 | 100 |
+| `/play/sudden` | 90 | 100 | 100 |
+| `/en` | 91 | 96 | 100 |
+
+The PWA is installable (`app/manifest.ts` and the icons in `public/icons/`). To keep these numbers:
+
+- Render the screen's text on the server, and let only the parts that need data wait for it. A "loading" screen in place of the page makes the first big paint wait for sign-in and an API call.
+- Keep the layout the same size while loading (use "…" for values), so nothing jumps.
+- Only the Arabic body font is preloaded. Lalezar and the Latin faces load on demand.
+
+## Deploy to production (Vercel Hobby + Supabase Free)
+
+1. **Supabase**: set up a project as in "Set up Supabase" above (anonymous sign-ins on, the rate limit raised, migrations applied, content seeded).
+2. **Vercel**: import the GitHub repo and set **Root Directory** to `sahra`. The framework preset is Next.js; keep the default build command.
+3. Add the environment variables (Production and Preview):
+   - `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Supabase → Project Settings → API);
+   - `SUPABASE_SERVICE_ROLE_KEY` (server only; never in the browser or the repo).
+4. Deploy, then in Supabase → Authentication → URL Configuration, set the **Site URL** to the Vercel domain and add `https://<domain>/auth/callback` to the redirect URLs (admin magic links).
+5. Make yourself an admin: run `SITE_URL=https://<domain> npm run admin:make -- you@example.com` with `.env.local` pointing at the production project, then open the printed link.
+6. In `/admin`, approve Kassa's lines, the traits and any translations you've checked. Nothing in draft is ever shown to players.
+7. Smoke test on the real domain: open `/play/group` on a laptop, join with two phones on mobile data (not the same Wi-Fi), play one trivia round, and check `/admin/pilot` shows the room.

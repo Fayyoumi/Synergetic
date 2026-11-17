@@ -141,7 +141,7 @@ design-reference/        PNG screenshots of every screen
 - **Votes:** `POST /api/rooms/[code]/vote`, stored in `votes` (one per voter per round). The reveal fires when everyone has voted, or on `timeup`.
 - **Server and UI:** `lib/server/whoGame.ts`; `components/who/*`, including the animated `VoteBars` (top in tomato, others in sunflower, counts as text with Arabic plural forms).
 - **Titles page:** `/titles` (bottom-nav tab الألقاب) lists the titles from rooms you were in (RLS).
-- **Kassa's lines** (`content/kassa.ar.json`) are still drafts, so the reveal uses UI copy ("{name}، الشعب قال كلمته!", the brief's own example) until Milestone 8 wires approved lines.
+- **Kassa's lines** at the reveal: an approved `vote_reveal_winner`/`vote_reveal_tie` line, or the built-in copy ("{name}، الشعب قال كلمته!", the brief's own example). See Milestone 8.
 
 **Sharing, analytics and admin (Milestone 7).**
 - **Story images (1080×1920)** are drawn in the browser with Canvas 2D (`lib/share/story.ts`, `components/share/ShareButton.tsx`). This deliberately departs from the spec's "Next.js ImageResponse": satori crashes on Lalezar's Arabic ligatures (e.g. "با"), and stripping them breaks lam-alef and letter positions. The browser shapes Arabic correctly with the app's own fonts.
@@ -164,7 +164,19 @@ design-reference/        PNG screenshots of every screen
   - Reports: resolve, or retire the question.
   - Upload: CSV or JSON, validated row by row with the content Zod schemas, never downgrading approved content.
   - `AuthBootstrap` (anonymous guest sign-in) is skipped on `/auth/*` and `/admin*`, so it can't overwrite an admin's session.
-- **Kassa's lines** are now imported into `kassa_lines` (id `event:mood:n`, drafts) for approval in the admin. Milestone 8 wires the approved lines into the games.
+- **Kassa's lines** are now imported into `kassa_lines` (id `event:mood:n`, drafts) for approval in the admin; Milestone 8 wires the approved ones into the games.
+
+**Pilot polish (Milestone 8).**
+- **Kassa's lines:**
+  - `lib/kassa/lines.ts` `pickKassaLine(lines, event, mood, seed, vars)` picks an approved line deterministically by seed. It tries the room's mood, then Family (never a cheekier mood than asked), and skips lines that need a `{name}`/`{points}` the caller doesn't have.
+  - `lib/kassa/useKassa.ts` loads the approved Arabic lines once and returns `say(event, mood, seed, vars)`. When no approved line fits (and always in English), it falls back to `messages` `kassaSays.{event}.named|plain`.
+  - Wired into solo (question reveal, results), host trivia, charades and Who-among-us (`data-testid="kassa-line"`). Host screens pass `room.mood`.
+- **Sounds:** `lib/sound.ts` synthesizes them with WebAudio (no files): `tick`, `correct`, `wrong`, `reveal`, `join`. `<SoundToggle />` is the mute button (saved in localStorage `sahra:sound`).
+- **Performance (Lighthouse mobile ≥85):**
+  - Pages render their text on the server. Don't replace a whole screen with "loading" while waiting for sign-in or an API call; only the parts that need the data wait, and they keep their size ("…" values), so there's no layout shift.
+  - Examples: `TriviaSetup` (only the categories wait for the catalog), `ProfileScreen` (forms render at once), `JoinRoom` (the join form shows while the room check runs). Data that arrives late never overwrites what the user already typed.
+  - Fonts: only Plex Arabic is preloaded (`subsets: ["arabic"]`); Lalezar has `preload: false`. Latin faces still load on demand through `unicode-range`.
+- **Full-night e2e:** `tests/e2e/pilot-night.spec.ts` (1 host + 3 phones: team trivia, then "Who among us?" in the same room, then close the night).
 
 **Spec rules (Milestones 4–6 build on these):**
 - One Supabase Realtime channel per room, `room:{code}`. Presence holds the player list and broadcast carries game messages. Codes are 4 random digits, unique among non-ended rooms (partial unique index). Rooms expire after 6 hours of inactivity.

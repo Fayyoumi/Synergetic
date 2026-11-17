@@ -13,6 +13,9 @@ import type { PresenceTracker } from "@/lib/realtime/presence";
 import type { Seat } from "@/lib/rooms/api";
 import type { TeamPublicView } from "@/lib/rooms/game";
 import { useQuestionCountdown } from "@/lib/rooms/useRoomGame";
+import { useKassa } from "@/lib/kassa/useKassa";
+import { playSound } from "@/lib/sound";
+import { useEffect } from "react";
 
 const teamBg: Record<Team, string> = { 1: "bg-tomato text-cream", 2: "bg-chair text-ink" };
 
@@ -26,6 +29,8 @@ type Props = {
   onTimeUp: () => void;
   onLobby: () => void;
   onEnd: () => void;
+  /** The night's mood, for Kassa's lines. */
+  mood: "family" | "friends" | "roast";
 };
 
 /** Host screen during team trivia: question, reveal, scoreboard, final. Large type for a TV. */
@@ -53,7 +58,7 @@ function TeamScores({ game, size = "md" }: { game: TeamPublicView; size?: "md" |
   );
 }
 
-function HostQuestion({ game, seats, tracker, offset, busy, onAdvance, onTimeUp }: Props) {
+function HostQuestion({ game, seats, tracker, offset, busy, onAdvance, onTimeUp, mood }: Props) {
   const t = useTranslations("trivia");
   const td = useTranslations("difficulty");
   const tc = useTranslations("categories");
@@ -63,6 +68,16 @@ function HostQuestion({ game, seats, tracker, offset, busy, onAdvance, onTimeUp 
   const q = game.question!;
   const reveal = game.phase === "reveal" ? game.reveal : null;
   const seconds = useQuestionCountdown(q.startedAt, offset, !reveal, onTimeUp);
+  const say = useKassa();
+  useEffect(() => {
+    if (!reveal && seconds > 0 && seconds <= 5) playSound("tick");
+  }, [seconds, reveal]);
+  const revealedIndex = reveal ? game.index : null;
+  useEffect(() => {
+    if (revealedIndex !== null) playSound("reveal");
+  }, [revealedIndex]);
+  // Kassa's line: the fastest correct player, or a "wrong" line if nobody got it.
+  const best = reveal ? Object.entries(reveal.perSeat).filter(([, r]) => r.correct).sort((a, b) => b[1].points - a[1].points)[0] : undefined;
   const letters = tq("letters").split(",");
   const inGame = seats.filter((s) => game.players[s.id]);
   const nameOf = (id: string) => seats.find((s) => s.id === id)?.name ?? "?";
@@ -116,14 +131,21 @@ function HostQuestion({ game, seats, tracker, offset, busy, onAdvance, onTimeUp 
       {reveal ? (
         <div className="flex items-center gap-6">
           <div className="flex flex-1 items-center gap-4 rounded-[20px] ink-border bg-paper px-5 py-3" data-testid="who-got-it">
-            <Kassa mood={Object.values(reveal.perSeat).some((r) => r.correct) ? "laughing" : "shocked"} size={70} />
-            <span className="display-text text-2xl">{t("whoGotIt")}:</span>
-            <span className="text-2xl font-bold">
-              {Object.entries(reveal.perSeat)
-                .filter(([, r]) => r.correct)
-                .map(([id, r]) => `${nameOf(id)} +${fmt(r.points)}`)
-                .join(t("listSeparator")) || t("nobody")}
-            </span>
+            <Kassa mood={best ? "laughing" : "shocked"} size={70} />
+            <div className="flex flex-col">
+              <span className="text-2xl font-bold" data-testid="kassa-line">
+                {best
+                  ? say("correct", mood, `${game.index}`, { name: nameOf(best[0]), points: fmt(best[1].points) })
+                  : say("wrong", mood, `${game.index}`)}
+              </span>
+              <span className="text-xl">
+                <span className="font-bold">{t("whoGotIt")}: </span>
+                {Object.entries(reveal.perSeat)
+                  .filter(([, r]) => r.correct)
+                  .map(([id, r]) => `${nameOf(id)} +${fmt(r.points)}`)
+                  .join(t("listSeparator")) || t("nobody")}
+              </span>
+            </div>
           </div>
           <div className="flex gap-3 text-2xl font-bold">
             {([1, 2] as Team[]).map((team) => (
@@ -208,7 +230,7 @@ function HostScoreboard({ game, seats, busy, onAdvance }: Props) {
   );
 }
 
-function HostFinal({ game, seats, busy, onLobby, onEnd }: Props) {
+function HostFinal({ game, seats, busy, onLobby, onEnd, mood }: Props) {
   const t = useTranslations("trivia");
   const tt = useTranslations("teams");
   const th = useTranslations("host");
@@ -216,6 +238,9 @@ function HostFinal({ game, seats, busy, onLobby, onEnd }: Props) {
   const locale = useLocale();
   const final = game.final;
   const winner = final?.winner ?? null;
+  const say = useKassa();
+  const top = final?.standings[0];
+  useEffect(() => playSound("reveal"), []);
   return (
     <div className="flex flex-1 flex-col gap-6 px-10 pb-8">
       <div className="flex items-center gap-6">
@@ -225,6 +250,14 @@ function HostFinal({ game, seats, busy, onLobby, onEnd }: Props) {
           <h2 className="display-text text-7xl" data-testid="winner">
             {winner === null ? tt("tie") : tt("wins", { team: tt(String(winner)) })}
           </h2>
+          {top && (
+            <p className="mt-2 text-2xl font-semibold" data-testid="kassa-line">
+              {say("final_winner", mood, "final", {
+                name: seats.find((x) => x.id === top.seatId)?.name ?? "",
+                points: formatNumber(top.points, locale),
+              })}
+            </p>
+          )}
         </div>
       </div>
       <TeamScores game={game} size="lg" />

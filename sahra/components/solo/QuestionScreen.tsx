@@ -8,6 +8,9 @@ import { Button } from "@/components/ui";
 import { BASE_POINTS, countdownSeconds } from "@/lib/game/scoring";
 import { formatNumber } from "@/lib/i18n/digits";
 import type { SoloView } from "@/lib/solo/api";
+import { Kassa } from "@/components/Kassa";
+import { useKassa } from "@/lib/kassa/useKassa";
+import { playSound } from "@/lib/sound";
 
 type Props = {
   view: SoloView;
@@ -38,7 +41,10 @@ export function QuestionScreen({ view, clockOffset, busy, onAnswer, onFifty, onN
     if (reveal) return;
     const tick = () => {
       const s = countdownSeconds(Date.now() + clockOffset - q.startedAt);
-      setSeconds(s);
+      setSeconds((prev) => {
+        if (s !== prev && s > 0 && s <= 5) playSound("tick");
+        return s;
+      });
       if (s === 0 && sentTimeout.current !== q.startedAt) {
         sentTimeout.current = q.startedAt;
         onAnswer(null, Date.now() + clockOffset, false);
@@ -50,6 +56,22 @@ export function QuestionScreen({ view, clockOffset, busy, onAnswer, onFifty, onN
   }, [reveal, q.startedAt, clockOffset, onAnswer]);
 
   const letters = t("letters").split(",");
+  const say = useKassa();
+  // Sound on the reveal (once per question).
+  const revealed = reveal ? (reveal.correct ? "correct" : "wrong") : null;
+  useEffect(() => {
+    if (revealed) playSound(revealed);
+  }, [revealed]);
+  const kassaEvent = !reveal
+    ? null
+    : reveal.correct
+      ? view.streak === 3
+        ? "streak_3"
+        : "correct"
+      : reveal.timedOut
+        ? "timeout"
+        : "wrong";
+  const kassaLine = kassaEvent ? say(kassaEvent, "family", `${view.gameId}:${q.index}`, { points: fmt(reveal!.points) }) : null;
   const otherLang = q.lang !== locale;
 
   return (
@@ -150,6 +172,12 @@ export function QuestionScreen({ view, clockOffset, busy, onAnswer, onFifty, onN
               </>
             )}
           </div>
+          {kassaLine && (
+            <div className="flex items-end gap-3" data-testid="kassa-line">
+              <Kassa mood={reveal.correct ? "laughing" : reveal.timedOut ? "shocked" : "sad"} size={70} className="shrink-0" />
+              <p className="rounded-[18px] rounded-es-[4px] ink-border bg-paper px-3 py-2 font-semibold">{kassaLine}</p>
+            </div>
+          )}
           <Button tone="sunflower" size="lg" block onClick={onNext} disabled={busy} data-testid="next">
             {reveal.done ? t("results") : t("next")}
           </Button>

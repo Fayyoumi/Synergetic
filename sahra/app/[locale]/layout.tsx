@@ -9,14 +9,17 @@ import "../globals.css";
 
 const lalezar = Lalezar({
   weight: "400",
-  subsets: ["arabic", "latin"],
+  // Only Arabic is preloaded: Latin faces still load on demand (unicode-range), which keeps
+  // the first paint light on slow phones. Lalezar (titles) isn't preloaded at all.
+  subsets: ["arabic"],
   variable: "--font-lalezar",
   display: "swap",
+  preload: false,
 });
 
 const plexArabic = IBM_Plex_Sans_Arabic({
   weight: ["400", "600", "700"],
-  subsets: ["arabic", "latin"],
+  subsets: ["arabic"],
   variable: "--font-plex-arabic",
   display: "swap",
 });

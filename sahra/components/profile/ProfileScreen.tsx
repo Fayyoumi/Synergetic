@@ -17,6 +17,7 @@ export function ProfileScreen() {
   const tc = useTranslations("common");
   const locale = useLocale();
   const fmt = (n: number) => formatNumber(n, locale);
+  const num = (n: number | undefined) => (n === undefined ? "…" : fmt(n));
 
   const [profile, setProfile] = useState<ProfileView | null>(null);
   const [failed, setFailed] = useState(false);
@@ -30,7 +31,7 @@ export function ProfileScreen() {
     void fetchProfile().then((r) => {
       if (!r.ok) return setFailed(true);
       setProfile(r.profile);
-      setName(r.profile.displayName ?? "");
+      setName((typed) => typed || (r.profile.displayName ?? ""));
       setBirthYear(r.profile.birthYear ? formatNumber(r.profile.birthYear, locale).replace(/[\u066C,]/g, "") : "");
     });
   }, [locale]);
@@ -62,47 +63,51 @@ export function ProfileScreen() {
     );
   }
   if (failed) return <p role="alert">{t("unavailable")}</p>;
-  if (!profile) return <p className="text-muted">{tc("loading")}</p>;
+  const initial = (profile?.displayName ?? t("guest")).trim().charAt(0);
 
-  const initial = (profile.displayName ?? t("guest")).trim().charAt(0);
-
+  // The forms render on the server straight away (fast first paint); the stats wait for the profile.
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4">
+      {/* Same layout while loading ("…" values), so nothing shifts when the profile arrives. */}
+      <div className="flex items-center gap-4" aria-busy={!profile}>
         <span
           aria-hidden="true"
           className="display-text flex h-16 w-16 items-center justify-center rounded-full ink-border-thick text-3xl text-ink"
-          style={{ background: profile.avatarColor }}
+          style={{ background: profile?.avatarColor ?? "transparent" }}
         >
-          <span className={profile.avatarColor === "#2B1B17" ? "text-cream" : ""}>{initial}</span>
+          <span className={profile?.avatarColor === "#2B1B17" ? "text-cream" : ""}>{profile ? initial : ""}</span>
         </span>
         <div>
-          <p className="display-text text-3xl">{profile.displayName || t("guest")}</p>
-          {profile.isGuest && <p className="text-sm text-muted">{t("guestNote")}</p>}
+          <p className="display-text text-3xl">{profile ? profile.displayName || t("guest") : tc("loading")}</p>
+          {profile?.isGuest && <p className="text-sm text-muted">{t("guestNote")}</p>}
         </div>
       </div>
 
       <dl className="grid grid-cols-3 gap-3">
         <div className="flex flex-col-reverse items-center rounded-[18px] ink-border bg-paper py-3">
           <dt className="text-sm">{t("xp")}</dt>
-          <dd className="display-text text-2xl" data-testid="profile-xp">{fmt(profile.totalXp)}</dd>
+          <dd className="display-text text-2xl" data-testid="profile-xp">
+            {num(profile?.totalXp)}
+          </dd>
         </div>
         <div className="flex flex-col-reverse items-center rounded-[18px] ink-border bg-paper py-3">
           <dt className="text-sm">{t("dayStreak")}</dt>
-          <dd className="display-text text-2xl">{fmt(profile.dayStreak)}</dd>
+          <dd className="display-text text-2xl">{num(profile?.dayStreak)}</dd>
         </div>
         <div className="flex flex-col-reverse items-center rounded-[18px] ink-border bg-paper py-3">
           <dt className="text-sm">{t("gamesPlayed")}</dt>
-          <dd className="display-text text-2xl" data-testid="profile-games">{fmt(profile.gamesPlayed)}</dd>
+          <dd className="display-text text-2xl" data-testid="profile-games">
+            {num(profile?.gamesPlayed)}
+          </dd>
         </div>
       </dl>
-      <p className="text-sm text-muted">{t("longestStreak", { days: fmt(profile.longestStreak) })}</p>
+      <p className="text-sm text-muted">{t("longestStreak", { days: num(profile?.longestStreak) })}</p>
 
       <section aria-labelledby="badges-h" className="flex flex-col gap-2">
         <h2 id="badges-h" className="display-text text-2xl">
           {t("badges")}
         </h2>
-        {profile.badges.length ? (
+        {profile?.badges.length ? (
           <ul className="flex flex-wrap gap-2">
             {profile.badges.map((b) => (
               <li key={b}>
@@ -111,7 +116,7 @@ export function ProfileScreen() {
             ))}
           </ul>
         ) : (
-          <p className="text-muted">{t("noBadges")}</p>
+          <p className="text-muted">{profile ? t("noBadges") : "…"}</p>
         )}
       </section>
 
@@ -149,9 +154,9 @@ export function ProfileScreen() {
                 key={c}
                 type="button"
                 aria-label={t("avatarOption", { n: fmt(i + 1) })}
-                aria-pressed={profile.avatarColor === c}
+                aria-pressed={profile?.avatarColor === c}
                 onClick={() => void save({ avatar_color: c })}
-                className={`h-11 w-11 rounded-full ${profile.avatarColor === c ? "ink-border-thick" : "ink-border"}`}
+                className={`h-11 w-11 rounded-full ${profile?.avatarColor === c ? "ink-border-thick" : "ink-border"}`}
                 style={{ background: c }}
               />
             ))}
@@ -186,7 +191,7 @@ export function ProfileScreen() {
               {tc("save")}
             </Button>
           </div>
-          {profile.isMinor && <p className="text-sm font-semibold">{t("minorNote")}</p>}
+          {profile?.isMinor && <p className="text-sm font-semibold">{t("minorNote")}</p>}
         </form>
 
         <div className="flex items-center justify-between">

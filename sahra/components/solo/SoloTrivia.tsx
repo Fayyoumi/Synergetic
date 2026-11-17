@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { BackHeader } from "@/components/BackHeader";
+import { SoundToggle } from "@/components/SoundToggle";
 import { Kassa } from "@/components/Kassa";
 import { Button, SpeechBubble } from "@/components/ui";
 import { formatNumber } from "@/lib/i18n/digits";
@@ -49,7 +50,8 @@ export function SoloTrivia({ mode }: { mode: Mode }) {
   const [showResults, setShowResults] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [lastChoice, setLastChoice] = useState<SetupChoice | null>(null);
-  const [resuming, setResuming] = useState(mode !== "daily");
+  // The setup screen renders straight away (server-rendered, fast first paint); a stored game swaps it out.
+  const [resuming, setResuming] = useState(false);
 
   const apply = useCallback(
     (v: SoloView) => {
@@ -82,6 +84,7 @@ export function SoloTrivia({ mode }: { mode: Mode }) {
     void (async () => {
       const id = readStoredGame(mode);
       if (id) {
+        setResuming(true);
         const r = await soloCall({ action: "state", gameId: id });
         if (!alive) return;
         if (r.ok && r.view.phase !== "finished") apply(r.view);
@@ -201,7 +204,16 @@ export function SoloTrivia({ mode }: { mode: Mode }) {
 
   return (
     <>
-      <BackHeader title={title} href="/play/solo" trailing={scorePill} />
+      <BackHeader
+        title={title}
+        href="/play/solo"
+        trailing={
+          <span className="flex items-center gap-2">
+            {scorePill}
+            <SoundToggle />
+          </span>
+        }
+      />
       {notice && (
         <p role="status" className="rounded-[16px] ink-border bg-sunflower px-4 py-2 font-semibold">
           {notice}
