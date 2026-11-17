@@ -143,6 +143,29 @@ design-reference/        PNG screenshots of every screen
 - **Titles page:** `/titles` (bottom-nav tab الألقاب) lists the titles from rooms you were in (RLS).
 - **Kassa's lines** (`content/kassa.ar.json`) are still drafts, so the reveal uses UI copy ("{name}، الشعب قال كلمته!", the brief's own example) until Milestone 8 wires approved lines.
 
+**Sharing, analytics and admin (Milestone 7).**
+- **Story images (1080×1920)** are drawn in the browser with Canvas 2D (`lib/share/story.ts`, `components/share/ShareButton.tsx`). This deliberately departs from the spec's "Next.js ImageResponse": satori crashes on Lalezar's Arabic ligatures (e.g. "با"), and stripping them breaks lam-alef and letter positions. The browser shapes Arabic correctly with the app's own fonts.
+  - Card kinds: `result` (solo, team and charades finals) and `title` (Who-among-us titles).
+  - Sharing uses `navigator.share` with the PNG file where supported; otherwise it shows a preview with a "save" link.
+  - Kassa is drawn from `kassaSvgString()`, which must stay in sync with `<Kassa>`.
+- **End of night:** when the host ends the room, the TV shows totals, title cards and a QR code to `/night/[code]`. That page lists the night's titles with share buttons, for people who were there (`GET /api/rooms/[code]/night`).
+- **Analytics:** server-side `logEvent()` for everything. Clients can log only `share_clicked` and `share_image_generated` (`POST /api/events`, whitelisted). Solo "play again" sends `again: true`, which logs `play_again_clicked`. `room_ended` records duration, players and games.
+- **Pilot dashboard:** `public.pilot_metrics(from, to)` (SQL, service role only) computes, per Amman day and per room:
+  - rooms created, average players, average night length;
+  - replay rate (% of rooms with 2+ games);
+  - share rate (% of players who finished a game that day and shared);
+  - solo day-1 and day-7 return, by first solo game day.
+
+  `/admin/pilot` shows these numbers.
+- **Admin:**
+  - Sign-in is an email magic link at `/admin`. `npm run admin:make -- email` creates or promotes a confirmed admin and prints a one-time link (`lib/admin/ensureAdmin.ts`). `/auth/callback` accepts `?code`, `?token_hash&type` or `#access_token`.
+  - Every admin API route checks `profiles.is_admin` (`lib/server/admin.ts`).
+  - Content review covers questions, traits, prompts, charades and `kassa_lines`: approve, retire, or back to draft. Questions need a source to be approved; banned traits are never approved.
+  - Reports: resolve, or retire the question.
+  - Upload: CSV or JSON, validated row by row with the content Zod schemas, never downgrading approved content.
+  - `AuthBootstrap` (anonymous guest sign-in) is skipped on `/auth/*` and `/admin*`, so it can't overwrite an admin's session.
+- **Kassa's lines** are now imported into `kassa_lines` (id `event:mood:n`, drafts) for approval in the admin. Milestone 8 wires the approved lines into the games.
+
 **Spec rules (Milestones 4–6 build on these):**
 - One Supabase Realtime channel per room, `room:{code}`. Presence holds the player list and broadcast carries game messages. Codes are 4 random digits, unique among non-ended rooms (partial unique index). Rooms expire after 6 hours of inactivity.
 - **The host screen is the authority.** It runs the reducer state machine and broadcasts the full public state after every change. Phones send intents only (`answer`, `vote`, `skip`, `got_it`, `steal`, `ready`), and the host ignores invalid or late ones.

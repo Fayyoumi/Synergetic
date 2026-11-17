@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
+import { ensureAdmin } from "../../lib/admin/ensureAdmin";
 
 /** Content admin and pilot dashboard, against a live Supabase. */
 
@@ -17,15 +18,10 @@ const service = () => createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SE
 
 /** Creates (or reuses) an admin and signs this page in with a one-time link, like `npm run admin:make`. */
 async function signInAsAdmin(page: Page, email: string) {
-  const db = service();
-  let link = await db.auth.admin.generateLink({ type: "magiclink", email });
-  if (link.error) {
-    await db.auth.admin.createUser({ email, email_confirm: true });
-    link = await db.auth.admin.generateLink({ type: "magiclink", email });
-  }
-  await db.from("profiles").update({ is_admin: true }).eq("id", link.data.user!.id);
-  await page.goto(`/auth/callback?token_hash=${link.data.properties!.hashed_token}&type=magiclink&next=/admin`);
-  await page.waitForURL(/\/admin$/);
+  const { tokenHash } = await ensureAdmin(service(), email);
+  await page.goto(`/auth/callback?token_hash=${tokenHash}&type=magiclink&next=/admin`);
+  await page.waitForURL((u) => u.pathname.endsWith("/admin"));
+  await expect(page.getByTestId("admin-tab-content")).toBeVisible();
 }
 
 test("guests can't use the admin", async ({ page }) => {

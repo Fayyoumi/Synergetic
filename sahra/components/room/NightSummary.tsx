@@ -46,7 +46,7 @@ export function HostNightSummary({ code }: { code: string }) {
             <Kassa mood="laughing" size={150} />
             <div>
               <h1 className="display-text text-6xl">{tl("endedTitle")}</h1>
-              {night && <p className="text-2xl">{t("gamesPlayed", { count: formatNumber(night.gamesPlayed, locale) })}</p>}
+              {night && <p className="text-2xl">{t("gamesPlayed", { n: night.gamesPlayed, count: formatNumber(night.gamesPlayed, locale) })}</p>}
             </div>
           </div>
           {night && (
@@ -111,7 +111,7 @@ export function NightPage({ code }: { code: string }) {
   if (night === null) return <p role="alert">{t("notThere")}</p>;
   return (
     <div className="flex flex-col gap-4" data-testid="night-page">
-      <p className="text-muted">{t("gamesPlayed", { count: formatNumber(night.gamesPlayed, locale) })}</p>
+      <p className="text-muted">{t("gamesPlayed", { n: night.gamesPlayed, count: formatNumber(night.gamesPlayed, locale) })}</p>
       <h2 className="display-text text-3xl">{t("titles")}</h2>
       {night.titles.length === 0 && <p>{t("noTitles")}</p>}
       <ul className="flex flex-col gap-3">

@@ -126,6 +126,20 @@ test("secret prompts, voting, veto, titles: a full game", async ({ page: host, b
 
   await host.getByTestId("play-again").click();
   await expect(host.getByTestId("host-start")).toBeVisible();
+
+  // End of night: totals, title cards and a QR code to share them.
+  await host.getByRole("button", { name: "سكّر السهرة" }).click();
+  await host.getByRole("button", { name: "سكّر السهرة" }).first().click();
+  await expect(host.getByTestId("night-summary")).toBeVisible();
+  await expect(host.getByTestId("night-titles").locator("li")).toHaveCount(titles);
+
+  // The QR code opens the night page, where players can share any title card.
+  await karim.page.goto(`/night/${code}`);
+  await expect(karim.page.getByTestId("night-page")).toBeVisible();
+  await karim.page.getByTestId("share-night-title").first().click();
+  const img = karim.page.getByTestId("story-preview");
+  await expect(img).toBeVisible();
+  expect(await img.evaluate((el: HTMLImageElement) => [el.naturalWidth, el.naturalHeight])).toEqual([1080, 1920]);
   for (const p of phones) await p.ctx.close();
 });
 

@@ -531,7 +531,7 @@
     "title": "ألقاب الليلة",
     "titles": "ألقاب الليلة",
     "noTitles": "ما في ألقاب الليلة.",
-    "gamesPlayed": "لعبتوا {count} ألعاب",
+    "gamesPlayed": "{n, plural, one {لعبتوا لعبة وحدة} two {لعبتوا لعبتين} few {لعبتوا {count} ألعاب} other {لعبتوا {count} لعبة}}",
     "scanToShare": "امسح الكود ونزّل الألقاب",
     "notThere": "هالسهرة مش إلك، أو مش موجودة."
   },

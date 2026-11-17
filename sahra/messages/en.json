@@ -531,7 +531,7 @@
     "title": "Titles of the night",
     "titles": "Titles of the night",
     "noTitles": "No titles tonight.",
-    "gamesPlayed": "You played {count} games",
+    "gamesPlayed": "{n, plural, one {You played one game} other {You played {count} games}}",
     "scanToShare": "Scan to download the titles",
     "notThere": "This night isn't yours, or doesn't exist."
   },

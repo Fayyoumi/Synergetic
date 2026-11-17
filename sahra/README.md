@@ -3,7 +3,7 @@
 Arabic-first party games for Arab gatherings, hosted by Kassa the tea glass.
 Next.js 16 + Supabase. Read `../CLAUDE.md` for conventions and `docs/SAHRA_SPEC.md` for the full spec.
 
-> Status: Milestone 6 (secret prompts + Who among us?). This README grows with each milestone.
+> Status: Milestone 7 (sharing, analytics, content admin). This README grows with each milestone.
 
 ### Try a room locally
 
@@ -68,13 +68,14 @@ Approved questions must have a `source_url`. Re-importing never turns approved c
 
 ## Create an admin
 
-Sign in once in the app, then in the Supabase SQL editor run:
-
-```sql
-update public.profiles set is_admin = true where id = '<your auth user id>';
+```bash
+npm run admin:make -- you@example.com
 ```
 
-(The admin pages arrive in Milestone 7.)
+This creates (or promotes) a confirmed admin account and prints a one-time sign-in link, which works even without email (locally). In production, set `SITE_URL` to your domain when running it, or simply sign in at `/admin` with an emailed magic link once the account is an admin.
+
+- `/admin`: review and approve drafts (questions need a source; Kassa's lines, traits, prompts, charades words), resolve question reports, upload CSV/JSON.
+- `/admin/pilot`: the pilot's go/no-go numbers per day and per room (rooms, average players, night length, replay rate, share rate, solo day-1/day-7 return).
 
 ## Tests
 

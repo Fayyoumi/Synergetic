@@ -23,7 +23,10 @@ export function AuthCallback() {
       const tokenHash = url.searchParams.get("token_hash");
       const hash = new URLSearchParams(url.hash.slice(1));
       if (code) ({ error } = await supabase.auth.exchangeCodeForSession(code));
-      else if (tokenHash) ({ error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "magiclink" }));
+      else if (tokenHash) {
+        const type = url.searchParams.get("type") === "signup" ? "signup" : url.searchParams.get("type") === "email" ? "email" : "magiclink";
+        ({ error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type }));
+      }
       else if (hash.get("access_token") && hash.get("refresh_token")) {
         ({ error } = await supabase.auth.setSession({ access_token: hash.get("access_token")!, refresh_token: hash.get("refresh_token")! }));
       } else error = new Error("no credentials");

@@ -5,9 +5,11 @@
  *   npm run admin:make -- you@example.com
  *
  * Uses NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (.env.local), and
- * SITE_URL for the link (default http://localhost:3000).
+ * SITE_URL for the link (default http://localhost:3000). In production the admin
+ * can also sign in normally at /admin with an emailed magic link.
  */
 import { createClient } from "@supabase/supabase-js";
+import { ensureAdmin } from "../lib/admin/ensureAdmin";
 
 async function main() {
   const email = process.argv[2];
@@ -23,23 +25,9 @@ async function main() {
   }
   const site = process.env.SITE_URL ?? "http://localhost:3000";
   const db = createClient(url, key, { auth: { persistSession: false } });
-
-  const link = await db.auth.admin.generateLink({ type: "magiclink", email });
-  let userId = link.data.user?.id;
-  if (link.error) {
-    // No such user yet: create it (confirmed), then make the link.
-    const created = await db.auth.admin.createUser({ email, email_confirm: true });
-    if (created.error) throw created.error;
-    userId = created.data.user.id;
-  }
-  const { error } = await db.from("profiles").update({ is_admin: true }).eq("id", userId!);
-  if (error) throw error;
-
-  const fresh = await db.auth.admin.generateLink({ type: "magiclink", email });
-  if (fresh.error) throw fresh.error;
-  const hashed = fresh.data.properties.hashed_token;
+  const { tokenHash } = await ensureAdmin(db, email);
   console.log(`${email} is now an admin.`);
-  console.log(`One-time sign-in link (valid ~1 hour):\n${site}/auth/callback?token_hash=${hashed}&type=magiclink&next=/admin`);
+  console.log(`One-time sign-in link (valid ~1 hour):\n${site}/auth/callback?token_hash=${tokenHash}&type=magiclink&next=/admin`);
 }
 
 main().catch((e) => {

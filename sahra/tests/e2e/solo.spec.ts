@@ -78,6 +78,19 @@ test.describe("solo trivia", () => {
     await expect(page.getByTestId("profile-games")).toHaveText("١");
   });
 
+  test("sharing a result makes a 1080×1920 story image", async ({ page }) => {
+    await startClassic(page);
+    for (let i = 0; i < 5; i++) {
+      await answer(page, true);
+      await next(page);
+    }
+    await page.getByTestId("share").click();
+    const img = page.getByTestId("story-preview");
+    await expect(img).toBeVisible();
+    expect(await img.evaluate((el: HTMLImageElement) => [el.naturalWidth, el.naturalHeight])).toEqual([1080, 1920]);
+    await expect(page.getByRole("link", { name: "احفظ الصورة" })).toHaveAttribute("download", "sahra.png");
+  });
+
   test("a wrong answer shows the right one and your pick", async ({ page }) => {
     await startClassic(page);
     await answer(page, false);
